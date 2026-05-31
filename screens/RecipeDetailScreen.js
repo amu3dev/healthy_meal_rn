@@ -1,8 +1,25 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity } from 'react-native';
 
-export default function RecipeDetailScreen({ route }) {
-  const { meal } = route.params;
+export default function RecipeDetailScreen({ navigation, route }) {
+  const meal = route && route.params ? route.params.meal : null;
+
+  if (!meal) {
+    return (
+      <View style={styles.emptyContainer}>
+        <Text style={styles.emptyTitle}>Recipe unavailable</Text>
+        <Text style={styles.emptyText}>
+          We could not find the meal details for this screen. Head back home and choose a meal again.
+        </Text>
+        <TouchableOpacity
+          style={styles.emptyButton}
+          onPress={() => navigation.goBack()}
+        >
+          <Text style={styles.emptyButtonText}>Go Back</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
 
   return (
     <ScrollView style={styles.container}>
@@ -37,7 +54,7 @@ export default function RecipeDetailScreen({ route }) {
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Ingredients</Text>
-          {meal.ingredients.map((ingredient, index) => (
+          {(meal.ingredients || []).map((ingredient, index) => (
             <View key={index} style={styles.listItem}>
               <Text style={styles.bullet}>•</Text>
               <Text style={styles.listText}>{ingredient}</Text>
@@ -47,7 +64,7 @@ export default function RecipeDetailScreen({ route }) {
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Instructions</Text>
-          {meal.instructions.map((instruction, index) => (
+          {(meal.instructions || []).map((instruction, index) => (
             <View key={index} style={styles.listItem}>
               <Text style={styles.stepNumber}>{index + 1}.</Text>
               <Text style={styles.listText}>{instruction}</Text>
@@ -63,6 +80,35 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
+  },
+  emptyContainer: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+    padding: 24,
+    justifyContent: 'center',
+  },
+  emptyTitle: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 12,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: '#555',
+    lineHeight: 24,
+  },
+  emptyButton: {
+    marginTop: 20,
+    backgroundColor: '#4CAF50',
+    borderRadius: 10,
+    paddingVertical: 12,
+    alignItems: 'center',
+  },
+  emptyButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   image: {
     width: '100%',
