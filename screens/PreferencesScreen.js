@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, Switch, TouchableOpacity } from 'react-native';
+import { Alert, View, Text, StyleSheet, ScrollView, Switch, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {
+  DEFAULT_PREFERENCES,
+  STORAGE_KEYS,
+  formatPreferenceLabel,
+  mergePreferences,
+} from '../lib/preferences';
 
 export default function PreferencesScreen() {
-  const [preferences, setPreferences] = useState({
-    vegetarian: false,
-    vegan: false,
-    glutenFree: false,
-    dairyFree: false,
-    lowCarb: false,
-    highProtein: false,
-  });
+  const [preferences, setPreferences] = useState(DEFAULT_PREFERENCES);
 
   useEffect(() => {
     loadPreferences();
@@ -18,9 +17,9 @@ export default function PreferencesScreen() {
 
   const loadPreferences = async () => {
     try {
-      const savedPreferences = await AsyncStorage.getItem('userPreferences');
+      const savedPreferences = await AsyncStorage.getItem(STORAGE_KEYS.userPreferences);
       if (savedPreferences) {
-        setPreferences(JSON.parse(savedPreferences));
+        setPreferences(mergePreferences(JSON.parse(savedPreferences)));
       }
     } catch (error) {
       console.error('Error loading preferences:', error);
@@ -29,11 +28,11 @@ export default function PreferencesScreen() {
 
   const savePreferences = async () => {
     try {
-      await AsyncStorage.setItem('userPreferences', JSON.stringify(preferences));
-      alert('Preferences saved successfully!');
+      await AsyncStorage.setItem(STORAGE_KEYS.userPreferences, JSON.stringify(preferences));
+      Alert.alert('Preferences saved', 'Your daily meal suggestions now use these filters.');
     } catch (error) {
       console.error('Error saving preferences:', error);
-      alert('Failed to save preferences');
+      Alert.alert('Save failed', 'We could not save your preferences. Please try again.');
     }
   };
 
@@ -49,17 +48,16 @@ export default function PreferencesScreen() {
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Dietary Preferences</Text>
         
-        {Object.entries(preferences).map(([key, value]) => (
+        {Object.keys(DEFAULT_PREFERENCES).map((key) => (
           <View key={key} style={styles.preferenceItem}>
             <Text style={styles.preferenceLabel}>
-              {key.replace(/([A-Z])/g, ' $1').trim().charAt(0).toUpperCase() + 
-               key.replace(/([A-Z])/g, ' $1').trim().slice(1)}
+              {formatPreferenceLabel(key)}
             </Text>
             <Switch
-              value={value}
+              value={preferences[key]}
               onValueChange={() => togglePreference(key)}
               trackColor={{ false: '#767577', true: '#81b0ff' }}
-              thumbColor={value ? '#4CAF50' : '#f4f3f4'}
+              thumbColor={preferences[key] ? '#4CAF50' : '#f4f3f4'}
             />
           </View>
         ))}
@@ -73,7 +71,7 @@ export default function PreferencesScreen() {
       </TouchableOpacity>
 
       <Text style={styles.note}>
-        Note: Your preferences will be used to customize your daily meal suggestions.
+        Note: We use these preferences when choosing your meal for the day.
       </Text>
     </ScrollView>
   );
