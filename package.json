@@ -1,12 +1,16 @@
 {
   "name": "healthy_meal_rn",
   "version": "1.0.0",
+  "description": "An Expo React Native app that surfaces a deterministic daily healthy meal based on saved dietary preferences.",
   "main": "index.js",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "check:syntax": "node --check App.js && node --check index.js && node --check data/meals.js && node --check lib/mealUtils.js && node --check lib/preferences.js && node --check screens/HomeScreen.js && node --check screens/PreferencesScreen.js && node --check screens/RecipeDetailScreen.js",
+    "check:expo": "npx expo install --check",
+    "check": "npm run check:syntax && npm run check:expo"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "1.23.1",
