@@ -1,113 +1,63 @@
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, RefreshControl } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-const MOCK_MEALS = [
-  {
-    id: 1,
-    name: 'Quinoa Buddha Bowl',
-    calories: 450,
-    protein: '20g',
-    carbs: '65g',
-    fats: '15g',
-    image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=500',
-    ingredients: [
-      '1 cup quinoa',
-      '2 cups mixed vegetables',
-      '1 avocado',
-      'chickpeas',
-      'tahini dressing'
-    ],
-    instructions: [
-      'Cook quinoa according to package instructions',
-      'Roast vegetables in the oven',
-      'Arrange in a bowl',
-      'Top with sliced avocado and chickpeas',
-      'Drizzle with tahini dressing'
-    ]
-  },
-  {
-    id: 2,
-    name: 'Grilled Salmon with Roasted Vegetables',
-    calories: 520,
-    protein: '42g',
-    carbs: '30g',
-    fats: '28g',
-    image: 'https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=500',
-    ingredients: [
-      '6 oz salmon fillet',
-      '2 cups mixed vegetables (broccoli, carrots, zucchini)',
-      '2 tablespoons olive oil',
-      'Fresh herbs (dill, parsley)',
-      'Lemon',
-      'Salt and pepper'
-    ],
-    instructions: [
-      'Preheat oven to 400°F (200°C)',
-      'Season salmon with herbs, salt, and pepper',
-      'Toss vegetables with olive oil and seasonings',
-      'Roast vegetables for 20 minutes',
-      'Grill salmon for 4-5 minutes per side',
-      'Serve with lemon wedges'
-    ]
-  },
-  {
-    id: 3,
-    name: 'Mediterranean Chickpea Salad',
-    calories: 380,
-    protein: '15g',
-    carbs: '45g',
-    fats: '18g',
-    image: 'https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38?w=500',
-    ingredients: [
-      '2 cans chickpeas, drained',
-      '1 cucumber, diced',
-      'Cherry tomatoes',
-      'Red onion',
-      'Feta cheese',
-      'Olive oil',
-      'Lemon juice',
-      'Fresh herbs'
-    ],
-    instructions: [
-      'Drain and rinse chickpeas',
-      'Chop vegetables into bite-sized pieces',
-      'Combine all ingredients in a large bowl',
-      'Drizzle with olive oil and lemon juice',
-      'Season with salt and pepper',
-      'Toss well and refrigerate for 30 minutes before serving'
-    ]
-  }
-];
+import { getDailyMeal, getPreferenceSummary } from '../lib/mealUtils';
+import {
+  DEFAULT_PREFERENCES,
+  STORAGE_KEYS,
+  getEnabledPreferences,
+  mergePreferences,
+} from '../lib/preferences';
 
 export default function HomeScreen({ navigation }) {
   const [meal, setMeal] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [statusMessage, setStatusMessage] = useState('Showing all meals');
 
-  const loadDailyMeal = async () => {
+  const loadDailyMeal = useCallback(async () => {
     try {
-      // In a real app, this would fetch from an API
-      const randomMeal = MOCK_MEALS[Math.floor(Math.random() * MOCK_MEALS.length)];
-      setMeal(randomMeal);
-      await AsyncStorage.setItem('lastMeal', JSON.stringify(randomMeal));
+      const savedPreferences = await AsyncStorage.getItem(STORAGE_KEYS.userPreferences);
+      const parsedPreferences = savedPreferences
+        ? mergePreferences(JSON.parse(savedPreferences))
+        : DEFAULT_PREFERENCES;
+      const dailyMeal = getDailyMeal(parsedPreferences);
+      const enabledPreferences = getEnabledPreferences(parsedPreferences);
+
+      setMeal(dailyMeal);
+      setStatusMessage(
+        dailyMeal
+          ? getPreferenceSummary(parsedPreferences)
+          : enabledPreferences.length > 0
+            ? 'No meals match your current filters yet'
+            : 'No meals are available right now'
+      );
     } catch (error) {
       console.error('Error loading meal:', error);
+      setMeal(null);
+      setStatusMessage('Unable to load today\'s meal right now');
+    } finally {
+      setIsLoading(false);
     }
-  };
+  }, []);
 
-  const onRefresh = React.useCallback(() => {
+  useFocusEffect(
+    useCallback(() => {
+      setIsLoading(true);
+      loadDailyMeal();
+    }, [loadDailyMeal])
+  );
+
+  const onRefresh = useCallback(() => {
     setRefreshing(true);
-    loadDailyMeal().then(() => setRefreshing(false));
-  }, []);
+    loadDailyMeal().finally(() => setRefreshing(false));
+  }, [loadDailyMeal]);
 
-  useEffect(() => {
-    loadDailyMeal();
-  }, []);
-
-  if (!meal) {
+  if (isLoading) {
     return (
-      <View style={styles.container}>
+      <View style={styles.loadingContainer}>
         <Text>Loading...</Text>
       </View>
     );
@@ -130,40 +80,57 @@ export default function HomeScreen({ navigation }) {
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity 
-        style={styles.card}
-        onPress={() => navigation.navigate('RecipeDetail', { meal })}
-      >
-        <Image 
-          source={{ uri: meal.image }}
-          style={styles.mealImage}
-        />
-        <View style={styles.mealInfo}>
-          <Text style={styles.mealName}>{meal.name}</Text>
-          
-          <View style={styles.nutritionContainer}>
-            <View style={styles.nutritionItem}>
-              <Text style={styles.nutritionValue}>{meal.calories}</Text>
-              <Text style={styles.nutritionLabel}>calories</Text>
-            </View>
-            <View style={styles.nutritionItem}>
-              <Text style={styles.nutritionValue}>{meal.protein}</Text>
-              <Text style={styles.nutritionLabel}>protein</Text>
-            </View>
-            <View style={styles.nutritionItem}>
-              <Text style={styles.nutritionValue}>{meal.carbs}</Text>
-              <Text style={styles.nutritionLabel}>carbs</Text>
-            </View>
-            <View style={styles.nutritionItem}>
-              <Text style={styles.nutritionValue}>{meal.fats}</Text>
-              <Text style={styles.nutritionLabel}>fats</Text>
+      <Text style={styles.summaryText}>{statusMessage}</Text>
+
+      {meal ? (
+        <TouchableOpacity
+          style={styles.card}
+          onPress={() => navigation.navigate('RecipeDetail', { meal })}
+        >
+          <Image
+            source={{ uri: meal.image }}
+            style={styles.mealImage}
+          />
+          <View style={styles.mealInfo}>
+            <Text style={styles.mealName}>{meal.name}</Text>
+
+            <View style={styles.nutritionContainer}>
+              <View style={styles.nutritionItem}>
+                <Text style={styles.nutritionValue}>{meal.calories}</Text>
+                <Text style={styles.nutritionLabel}>calories</Text>
+              </View>
+              <View style={styles.nutritionItem}>
+                <Text style={styles.nutritionValue}>{meal.protein}</Text>
+                <Text style={styles.nutritionLabel}>protein</Text>
+              </View>
+              <View style={styles.nutritionItem}>
+                <Text style={styles.nutritionValue}>{meal.carbs}</Text>
+                <Text style={styles.nutritionLabel}>carbs</Text>
+              </View>
+              <View style={styles.nutritionItem}>
+                <Text style={styles.nutritionValue}>{meal.fats}</Text>
+                <Text style={styles.nutritionLabel}>fats</Text>
+              </View>
             </View>
           </View>
+        </TouchableOpacity>
+      ) : (
+        <View style={styles.emptyCard}>
+          <Text style={styles.emptyTitle}>No matching meal for today</Text>
+          <Text style={styles.emptyText}>
+            Adjust your preferences to widen the meal pool, then come back here.
+          </Text>
+          <TouchableOpacity
+            style={styles.emptyButton}
+            onPress={() => navigation.navigate('Preferences')}
+          >
+            <Text style={styles.emptyButtonText}>Review Preferences</Text>
+          </TouchableOpacity>
         </View>
-      </TouchableOpacity>
+      )}
 
       <Text style={styles.tip}>
-        Tip: Pull down to refresh for a new meal suggestion
+        Tip: Today's pick stays consistent all day. Change your preferences or come back tomorrow for a new match.
       </Text>
     </ScrollView>
   );
@@ -173,6 +140,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
+  },
+  loadingContainer: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   header: {
     flexDirection: 'row',
@@ -188,6 +161,11 @@ const styles = StyleSheet.create({
   preferencesButton: {
     padding: 8,
   },
+  summaryText: {
+    marginHorizontal: 16,
+    color: '#666',
+    fontSize: 14,
+  },
   card: {
     backgroundColor: '#fff',
     borderRadius: 15,
@@ -200,6 +178,43 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
+  },
+  emptyCard: {
+    backgroundColor: '#fff',
+    borderRadius: 15,
+    margin: 16,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.15,
+    shadowRadius: 3.84,
+    elevation: 4,
+  },
+  emptyTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 8,
+  },
+  emptyText: {
+    color: '#666',
+    fontSize: 15,
+    lineHeight: 22,
+  },
+  emptyButton: {
+    marginTop: 16,
+    backgroundColor: '#4CAF50',
+    borderRadius: 10,
+    paddingVertical: 12,
+    alignItems: 'center',
+  },
+  emptyButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 15,
   },
   mealImage: {
     width: '100%',
@@ -238,7 +253,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#666',
     fontSize: 14,
-    marginTop: 8,
+    marginTop: 4,
+    marginHorizontal: 16,
+    lineHeight: 20,
     marginBottom: 24,
   },
 });
