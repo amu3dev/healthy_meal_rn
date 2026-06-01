@@ -1,46 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Alert, View, Text, StyleSheet, ScrollView, Switch, TouchableOpacity } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {
-  DEFAULT_PREFERENCES,
-  STORAGE_KEYS,
-  formatPreferenceLabel,
-  mergePreferences,
-} from '../lib/preferences';
+import { DEFAULT_PREFERENCES, formatPreferenceLabel } from '../lib/preferences';
+import usePreferences from '../hooks/usePreferences';
 
 export default function PreferencesScreen() {
-  const [preferences, setPreferences] = useState(DEFAULT_PREFERENCES);
+  const { preferences, savePreferences, togglePreference } = usePreferences();
 
-  useEffect(() => {
-    loadPreferences();
-  }, []);
-
-  const loadPreferences = async () => {
+  const handleSavePreferences = async () => {
     try {
-      const savedPreferences = await AsyncStorage.getItem(STORAGE_KEYS.userPreferences);
-      if (savedPreferences) {
-        setPreferences(mergePreferences(JSON.parse(savedPreferences)));
-      }
-    } catch (error) {
-      console.error('Error loading preferences:', error);
-    }
-  };
-
-  const savePreferences = async () => {
-    try {
-      await AsyncStorage.setItem(STORAGE_KEYS.userPreferences, JSON.stringify(preferences));
+      await savePreferences();
       Alert.alert('Preferences saved', 'Your daily meal suggestions now use these filters.');
     } catch (error) {
       console.error('Error saving preferences:', error);
       Alert.alert('Save failed', 'We could not save your preferences. Please try again.');
     }
-  };
-
-  const togglePreference = (key) => {
-    setPreferences(prev => ({
-      ...prev,
-      [key]: !prev[key]
-    }));
   };
 
   return (
@@ -65,7 +38,7 @@ export default function PreferencesScreen() {
 
       <TouchableOpacity
         style={styles.saveButton}
-        onPress={savePreferences}
+        onPress={handleSavePreferences}
       >
         <Text style={styles.saveButtonText}>Save Preferences</Text>
       </TouchableOpacity>
