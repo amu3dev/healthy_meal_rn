@@ -2,27 +2,22 @@ import React, { useCallback, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, RefreshControl } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { MaterialIcons } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getDailyMeal, getPreferenceSummary } from '../lib/mealUtils';
 import {
-  DEFAULT_PREFERENCES,
-  STORAGE_KEYS,
   getEnabledPreferences,
-  mergePreferences,
 } from '../lib/preferences';
+import usePreferences from '../hooks/usePreferences';
 
 export default function HomeScreen({ navigation }) {
   const [meal, setMeal] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [statusMessage, setStatusMessage] = useState('Showing all meals');
+  const { loadPreferences } = usePreferences({ loadOnMount: false });
 
   const loadDailyMeal = useCallback(async () => {
     try {
-      const savedPreferences = await AsyncStorage.getItem(STORAGE_KEYS.userPreferences);
-      const parsedPreferences = savedPreferences
-        ? mergePreferences(JSON.parse(savedPreferences))
-        : DEFAULT_PREFERENCES;
+      const parsedPreferences = await loadPreferences();
       const dailyMeal = getDailyMeal(parsedPreferences);
       const enabledPreferences = getEnabledPreferences(parsedPreferences);
 
@@ -41,7 +36,7 @@ export default function HomeScreen({ navigation }) {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [loadPreferences]);
 
   useFocusEffect(
     useCallback(() => {
@@ -85,7 +80,7 @@ export default function HomeScreen({ navigation }) {
       {meal ? (
         <TouchableOpacity
           style={styles.card}
-          onPress={() => navigation.navigate('RecipeDetail', { meal })}
+          onPress={() => navigation.navigate('RecipeDetail', { mealId: meal.id })}
         >
           <Image
             source={{ uri: meal.image }}
