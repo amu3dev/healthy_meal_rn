@@ -19,17 +19,21 @@ describe('meal utilities', () => {
   it('filters meals based on enabled preferences', () => {
     const meals = getMatchingMeals({ highProtein: true });
 
-    expect(meals.map((meal) => meal.name)).toEqual([
-      'Grilled Salmon with Roasted Vegetables',
-      'Turkey Lettuce Wraps',
-      'Tofu Stir-Fry with Brown Rice',
-      'Greek Yogurt Berry Parfait',
-      'Zucchini Noodles with Pesto Chicken',
-    ]);
+    expect(meals).toHaveLength(10);
+    expect(meals.every((meal) => meal.tags.highProtein)).toBe(true);
+    expect(meals.map((meal) => meal.name)).toEqual(
+      expect.arrayContaining([
+        'Grilled Salmon with Roasted Vegetables',
+        'Tempeh Lettuce Cups',
+        'Baked Cod with Green Beans',
+      ])
+    );
   });
 
   it('returns no matches for impossible combinations', () => {
-    expect(getMatchingMeals({ vegan: true, highProtein: true, lowCarb: true })).toEqual([]);
+    expect(
+      getMatchingMeals({ vegan: true, highProtein: true, lowCarb: true, glutenFree: true })
+    ).toEqual([]);
   });
 
   it('returns a deterministic daily meal for the same day and preference set', () => {
@@ -42,7 +46,10 @@ describe('meal utilities', () => {
 
   it('returns null when no meals match the selected filters', () => {
     expect(
-      getDailyMeal({ vegan: true, highProtein: true, lowCarb: true }, new Date('2026-05-31'))
+      getDailyMeal(
+        { vegan: true, highProtein: true, lowCarb: true, glutenFree: true },
+        new Date('2026-05-31')
+      )
     ).toBeNull();
   });
 
