@@ -112,6 +112,10 @@ export default function HomeScreen({ navigation }) {
                 <Text style={styles.nutritionLabel}>fats</Text>
               </View>
             </View>
+
+            <Text style={styles.metaText}>
+              {meal.prepTime} • {meal.difficulty} • {meal.cuisine}
+            </Text>
           </View>
         </TouchableOpacity>
       ) : (
@@ -248,6 +252,11 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#666',
     marginTop: 4,
+  },
+  metaText: {
+    marginTop: 16,
+    color: '#666',
+    fontSize: 14,
   },
   tip: {
     textAlign: 'center',
