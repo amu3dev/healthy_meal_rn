@@ -8,9 +8,10 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
+    "test": "jest --runInBand",
     "check:syntax": "node --check App.js && node --check index.js && node --check data/meals.js && node --check lib/mealUtils.js && node --check lib/preferences.js && node --check screens/HomeScreen.js && node --check screens/PreferencesScreen.js && node --check screens/RecipeDetailScreen.js",
     "check:expo": "npx expo install --check",
-    "check": "npm run check:syntax && npm run check:expo"
+    "check": "npm run check:syntax && npm run check:expo && npm test"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "1.23.1",
@@ -26,7 +27,8 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
-    "@react-native-community/cli": "latest"
+    "@react-native-community/cli": "latest",
+    "jest": "^29.7.0"
   },
   "private": true
 }
