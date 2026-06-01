@@ -49,6 +49,29 @@ export default function RecipeDetailScreen({ navigation, route }) {
               <Text style={styles.nutritionValue}>{meal.fats}</Text>
               <Text style={styles.nutritionLabel}>fats</Text>
             </View>
+            <View style={styles.nutritionItem}>
+              <Text style={styles.nutritionValue}>{meal.fiber}</Text>
+              <Text style={styles.nutritionLabel}>fiber</Text>
+            </View>
+          </View>
+        </View>
+
+        <View style={styles.metaCard}>
+          <View style={styles.metaItem}>
+            <Text style={styles.metaLabel}>Prep Time</Text>
+            <Text style={styles.metaValue}>{meal.prepTime}</Text>
+          </View>
+          <View style={styles.metaItem}>
+            <Text style={styles.metaLabel}>Difficulty</Text>
+            <Text style={styles.metaValue}>{meal.difficulty}</Text>
+          </View>
+          <View style={styles.metaItem}>
+            <Text style={styles.metaLabel}>Cuisine</Text>
+            <Text style={styles.metaValue}>{meal.cuisine}</Text>
+          </View>
+          <View style={styles.metaItem}>
+            <Text style={styles.metaLabel}>Servings</Text>
+            <Text style={styles.metaValue}>{meal.servings}</Text>
           </View>
         </View>
 
@@ -139,7 +162,7 @@ const styles = StyleSheet.create({
   },
   nutritionRow: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
   },
   nutritionItem: {
     alignItems: 'center',
@@ -153,6 +176,38 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#666',
     marginTop: 4,
+  },
+  metaCard: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 24,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  metaItem: {
+    width: '48%',
+    marginBottom: 12,
+  },
+  metaLabel: {
+    color: '#666',
+    fontSize: 12,
+    textTransform: 'uppercase',
+    marginBottom: 4,
+  },
+  metaValue: {
+    color: '#333',
+    fontSize: 16,
+    fontWeight: '600',
   },
   section: {
     backgroundColor: '#fff',
