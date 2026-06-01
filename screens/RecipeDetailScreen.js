@@ -1,8 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity } from 'react-native';
+import { getMealById } from '../lib/mealUtils';
 
 export default function RecipeDetailScreen({ navigation, route }) {
-  const meal = route && route.params ? route.params.meal : null;
+  const mealId = route && route.params ? route.params.mealId : null;
+  const meal = getMealById(mealId);
 
   if (!meal) {
     return (
