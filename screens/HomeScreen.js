@@ -1,7 +1,8 @@
 import React, { useCallback, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, RefreshControl } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { MaterialIcons } from '@expo/vector-icons';
+import MealImage from '../components/MealImage';
 import { getDailyMeal, getPreferenceSummary } from '../lib/mealUtils';
 import {
   getEnabledPreferences,
@@ -82,8 +83,9 @@ export default function HomeScreen({ navigation }) {
           style={styles.card}
           onPress={() => navigation.navigate('RecipeDetail', { mealId: meal.id })}
         >
-          <Image
-            source={{ uri: meal.image }}
+          <MealImage
+            uri={meal.image}
+            label={meal.name}
             style={styles.mealImage}
           />
           <View style={styles.mealInfo}>
