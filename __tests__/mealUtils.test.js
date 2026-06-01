@@ -1,6 +1,7 @@
 import MEALS from '../data/meals';
 import {
   getDailyMeal,
+  getMealById,
   getMatchingMeals,
   getPreferenceSummary,
 } from '../lib/mealUtils';
@@ -8,6 +9,11 @@ import {
 describe('meal utilities', () => {
   it('returns the full catalog when no preferences are enabled', () => {
     expect(getMatchingMeals()).toHaveLength(MEALS.length);
+  });
+
+  it('resolves meals from the canonical source by id', () => {
+    expect(getMealById(2)?.name).toBe('Grilled Salmon with Roasted Vegetables');
+    expect(getMealById('999')).toBeNull();
   });
 
   it('filters meals based on enabled preferences', () => {
