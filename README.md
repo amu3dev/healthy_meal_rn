@@ -16,6 +16,7 @@ Healthy Meal RN is an Expo + React Native app that suggests a healthy meal of th
 - Dietary filters for vegetarian, vegan, gluten-free, dairy-free, low-carb, and high-protein preferences
 - Persistent preferences saved on device
 - Recipe detail screen with nutrition, ingredients, and cooking steps
+- Expanded meal metadata including prep time, difficulty, cuisine, servings, and fiber
 - Empty-state guidance when no meals match the selected preferences
 - Pull-to-refresh that reloads the current daily selection logic
 
@@ -69,6 +70,7 @@ This currently verifies:
 
 - JavaScript syntax across the app source
 - Expo dependency compatibility with the installed SDK
+- Deterministic meal-selection and preference helper tests with Jest
 
 ## Manual Test Scenarios
 
@@ -76,8 +78,8 @@ Use these quick checks to verify the main product logic:
 
 1. Open the app with all filters off and confirm the home screen shows a meal with `Showing all meals`.
 2. Enable `High Protein` and confirm the salmon meal is shown.
-3. Enable `Vegan` and confirm the quinoa bowl is shown.
-4. Enable `Vegan` + `High Protein` and confirm the no-match empty state appears.
+3. Enable `Vegan` and confirm a vegan meal is shown.
+4. Enable `Vegan` + `High Protein` + `Low Carb` and confirm the no-match empty state appears.
 5. Return to Preferences, loosen filters, and confirm a meal appears again.
 
 ## Resume-Friendly Highlights
