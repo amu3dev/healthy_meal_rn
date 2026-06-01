@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import MealImage from '../components/MealImage';
 import { getMealById } from '../lib/mealUtils';
 
 export default function RecipeDetailScreen({ navigation, route }) {
@@ -25,8 +26,9 @@ export default function RecipeDetailScreen({ navigation, route }) {
 
   return (
     <ScrollView style={styles.container}>
-      <Image 
-        source={{ uri: meal.image }}
+      <MealImage
+        uri={meal.image}
+        label={meal.name}
         style={styles.image}
       />
 
