@@ -40,7 +40,7 @@ const MEALS = [
     name: 'Grilled Salmon with Roasted Vegetables',
     calories: 520,
     protein: '42g',
-    carbs: '30g',
+    carbs: '18g',
     fats: '28g',
     fiber: '9g',
     prepTime: '30 min',
@@ -50,7 +50,7 @@ const MEALS = [
     image: 'https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=500',
     ingredients: [
       '6 oz salmon fillet',
-      '2 cups mixed vegetables (broccoli, carrots, zucchini)',
+      '2 cups mixed vegetables (broccoli, zucchini, asparagus)',
       '2 tablespoons olive oil',
       'Fresh herbs (dill, parsley)',
       'Lemon',
@@ -485,7 +485,7 @@ const MEALS = [
     name: 'Baked Cod with Green Beans',
     calories: 345,
     protein: '34g',
-    carbs: '16g',
+    carbs: '11g',
     fats: '14g',
     fiber: '5g',
     prepTime: '28 min',
@@ -496,7 +496,7 @@ const MEALS = [
     ingredients: [
       '2 cod fillets',
       'Green beans',
-      'Baby potatoes',
+      'Roasted asparagus',
       'Olive oil',
       'Lemon zest',
       'Paprika',
@@ -504,7 +504,7 @@ const MEALS = [
     instructions: [
       'Preheat the oven to 400°F (200°C)',
       'Season cod with paprika and lemon zest',
-      'Roast potatoes and green beans until tender',
+      'Roast asparagus and green beans until tender',
       'Bake cod until flaky',
       'Serve everything together with lemon',
     ],
@@ -566,7 +566,7 @@ const MEALS = [
     difficulty: 'Easy',
     cuisine: 'Asian-Inspired',
     servings: 2,
-    image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=500',
+    image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500',
     ingredients: [
       '1 cup cooked quinoa',
       '1 cup shelled edamame',
@@ -751,7 +751,7 @@ const MEALS = [
     difficulty: 'Easy',
     cuisine: 'Asian-Inspired',
     servings: 2,
-    image: 'https://images.unsplash.com/photo-1515003197210-e0cd71810b5f?w=500',
+    image: 'https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=500',
     ingredients: [
       'Firm tofu',
       'Collard green leaves',
@@ -781,7 +781,7 @@ const MEALS = [
     name: 'Bison Veggie Burger Plate',
     calories: 470,
     protein: '37g',
-    carbs: '18g',
+    carbs: '13g',
     fats: '26g',
     fiber: '5g',
     prepTime: '25 min',
@@ -791,7 +791,7 @@ const MEALS = [
     image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500',
     ingredients: [
       'Lean bison patties',
-      'Roasted sweet potato wedges',
+      'Roasted zucchini wedges',
       'Tomato slices',
       'Lettuce',
       'Red onion',
@@ -799,10 +799,10 @@ const MEALS = [
     ],
     instructions: [
       'Season and cook the bison patties',
-      'Roast the sweet potato wedges until crisp',
+      'Roast the zucchini wedges until tender and browned',
       'Slice the fresh burger toppings',
       'Plate the patty over lettuce instead of a bun',
-      'Serve with mustard and sweet potato wedges',
+      'Serve with mustard and roasted zucchini wedges',
     ],
     tags: {
       vegetarian: false,
@@ -825,7 +825,7 @@ const MEALS = [
     difficulty: 'Easy',
     cuisine: 'Mediterranean',
     servings: 2,
-    image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=500',
+    image: 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=500',
     ingredients: [
       'Cooked salmon fillet',
       'Romaine lettuce',
@@ -862,7 +862,7 @@ const MEALS = [
     difficulty: 'Easy',
     cuisine: 'Asian-Inspired',
     servings: 3,
-    image: 'https://images.unsplash.com/photo-1512058564366-18510be2db19?w=500',
+    image: 'https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?w=500',
     ingredients: [
       'Tempeh',
       'Broccoli florets',
@@ -899,7 +899,7 @@ const MEALS = [
     difficulty: 'Easy',
     cuisine: 'Asian-Inspired',
     servings: 2,
-    image: 'https://images.unsplash.com/photo-1515003197210-e0cd71810b5f?w=500',
+    image: 'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=500',
     ingredients: [
       'Lean ground chicken',
       'Shredded cabbage',
