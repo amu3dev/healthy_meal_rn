@@ -16,6 +16,26 @@ describe('PreferencesScreen', () => {
     Alert.alert.mockRestore();
   });
 
+  it('shows a loading state while preferences hydrate', () => {
+    usePreferences.mockReturnValue({
+      preferences: {
+        vegetarian: false,
+        vegan: false,
+        glutenFree: false,
+        dairyFree: false,
+        lowCarb: false,
+        highProtein: false,
+      },
+      isLoading: true,
+      savePreferences: jest.fn(),
+      togglePreference: jest.fn(),
+    });
+
+    render(<PreferencesScreen />);
+
+    expect(screen.getByText('Loading preferences...')).toBeTruthy();
+  });
+
   it('saves preferences and shows success feedback', async () => {
     const savePreferences = jest.fn().mockResolvedValue(undefined);
 
@@ -28,6 +48,7 @@ describe('PreferencesScreen', () => {
         lowCarb: false,
         highProtein: true,
       },
+      isLoading: false,
       savePreferences,
       togglePreference: jest.fn(),
     });
