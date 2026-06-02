@@ -4,7 +4,12 @@ import { DEFAULT_PREFERENCES, formatPreferenceLabel } from '../lib/preferences';
 import usePreferences from '../hooks/usePreferences';
 
 export default function PreferencesScreen() {
-  const { preferences, savePreferences, togglePreference } = usePreferences();
+  const {
+    preferences,
+    isLoading,
+    savePreferences,
+    togglePreference,
+  } = usePreferences();
 
   const handleSavePreferences = async () => {
     try {
@@ -15,6 +20,14 @@ export default function PreferencesScreen() {
       Alert.alert('Save failed', 'We could not save your preferences. Please try again.');
     }
   };
+
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <Text>Loading preferences...</Text>
+      </View>
+    );
+  }
 
   return (
     <ScrollView style={styles.container}>
@@ -54,6 +67,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
+  },
+  loadingContainer: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   section: {
     backgroundColor: '#fff',
