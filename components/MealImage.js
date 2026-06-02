@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { Image as ExpoImage } from 'expo-image';
 
@@ -11,6 +11,11 @@ export default function MealImage({
   const [isLoading, setIsLoading] = useState(Boolean(uri));
   const [hasError, setHasError] = useState(!uri);
   const fallbackLabel = useMemo(() => label || 'Meal photo', [label]);
+
+  useEffect(() => {
+    setIsLoading(Boolean(uri));
+    setHasError(!uri);
+  }, [uri]);
 
   if (hasError) {
     return (
