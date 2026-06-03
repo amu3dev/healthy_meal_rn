@@ -7,6 +7,7 @@ import { getDailyMeal, getPreferenceSummary } from '../lib/mealUtils';
 import {
   getEnabledPreferences,
 } from '../lib/preferences';
+import { COLORS, RADII, SHADOWS, SPACING } from '../lib/theme';
 import usePreferences from '../hooks/usePreferences';
 
 export default function HomeScreen({ navigation }) {
@@ -72,7 +73,7 @@ export default function HomeScreen({ navigation }) {
           style={styles.preferencesButton}
           onPress={() => navigation.navigate('Preferences')}
         >
-          <MaterialIcons name="settings" size={24} color="#4CAF50" />
+          <MaterialIcons name="settings" size={24} color={COLORS.primary} />
         </TouchableOpacity>
       </View>
 
@@ -140,11 +141,11 @@ export default function HomeScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: COLORS.background,
   },
   loadingContainer: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: COLORS.background,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -152,85 +153,71 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 16,
+    padding: SPACING.lg,
   },
   headerText: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#333',
+    color: COLORS.textPrimary,
   },
   preferencesButton: {
-    padding: 8,
+    padding: SPACING.sm,
   },
   summaryText: {
-    marginHorizontal: 16,
-    color: '#666',
+    marginHorizontal: SPACING.lg,
+    color: COLORS.textMuted,
     fontSize: 14,
   },
   card: {
-    backgroundColor: '#fff',
-    borderRadius: 15,
-    margin: 16,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    backgroundColor: COLORS.surface,
+    borderRadius: RADII.xl,
+    margin: SPACING.lg,
+    ...SHADOWS.prominent,
   },
   emptyCard: {
-    backgroundColor: '#fff',
-    borderRadius: 15,
-    margin: 16,
-    padding: 20,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.15,
-    shadowRadius: 3.84,
-    elevation: 4,
+    backgroundColor: COLORS.surface,
+    borderRadius: RADII.xl,
+    margin: SPACING.lg,
+    padding: SPACING.xl,
+    ...SHADOWS.card,
   },
   emptyTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 8,
+    color: COLORS.textPrimary,
+    marginBottom: SPACING.sm,
   },
   emptyText: {
-    color: '#666',
+    color: COLORS.textMuted,
     fontSize: 15,
     lineHeight: 22,
   },
   emptyButton: {
-    marginTop: 16,
-    backgroundColor: '#4CAF50',
-    borderRadius: 10,
+    marginTop: SPACING.lg,
+    backgroundColor: COLORS.primary,
+    borderRadius: RADII.md,
     paddingVertical: 12,
     alignItems: 'center',
   },
   emptyButtonText: {
-    color: '#fff',
+    color: COLORS.primaryContrast,
     fontWeight: 'bold',
     fontSize: 15,
   },
   mealImage: {
     width: '100%',
     height: 200,
-    borderTopLeftRadius: 15,
-    borderTopRightRadius: 15,
+    borderTopLeftRadius: RADII.xl,
+    borderTopRightRadius: RADII.xl,
   },
   mealInfo: {
-    padding: 16,
+    padding: SPACING.lg,
   },
   mealName: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 16,
-    color: '#333',
+    marginBottom: SPACING.lg,
+    color: COLORS.textPrimary,
   },
   nutritionContainer: {
     flexDirection: 'row',
@@ -243,21 +230,21 @@ const styles = StyleSheet.create({
   nutritionValue: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#4CAF50',
+    color: COLORS.primary,
   },
   nutritionLabel: {
     fontSize: 12,
-    color: '#666',
-    marginTop: 4,
+    color: COLORS.textMuted,
+    marginTop: SPACING.xs,
   },
   metaText: {
-    marginTop: 16,
-    color: '#666',
+    marginTop: SPACING.lg,
+    color: COLORS.textMuted,
     fontSize: 14,
   },
   tip: {
     textAlign: 'center',
-    color: '#666',
+    color: COLORS.textMuted,
     fontSize: 14,
     marginTop: 4,
     marginHorizontal: 16,
