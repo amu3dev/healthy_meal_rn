@@ -2,6 +2,7 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
+import { COLORS } from './lib/theme';
 
 // Screens
 import HomeScreen from './screens/HomeScreen';
@@ -18,9 +19,9 @@ export default function App() {
         initialRouteName="Home"
         screenOptions={{
           headerStyle: {
-            backgroundColor: '#4CAF50',
+            backgroundColor: COLORS.primary,
           },
-          headerTintColor: '#fff',
+          headerTintColor: COLORS.primaryContrast,
           headerTitleStyle: {
             fontWeight: 'bold',
           },
