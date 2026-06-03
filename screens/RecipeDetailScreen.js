@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import MealImage from '../components/MealImage';
 import { getMealById } from '../lib/mealUtils';
+import { COLORS, RADII, SHADOWS, SPACING } from '../lib/theme';
 
 export default function RecipeDetailScreen({ navigation, route }) {
   const mealId = route && route.params ? route.params.mealId : null;
@@ -106,34 +107,34 @@ export default function RecipeDetailScreen({ navigation, route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: COLORS.background,
   },
   emptyContainer: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
-    padding: 24,
+    backgroundColor: COLORS.background,
+    padding: SPACING.xxl,
     justifyContent: 'center',
   },
   emptyTitle: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#333',
+    color: COLORS.textPrimary,
     marginBottom: 12,
   },
   emptyText: {
     fontSize: 16,
-    color: '#555',
+    color: COLORS.textSoft,
     lineHeight: 24,
   },
   emptyButton: {
     marginTop: 20,
-    backgroundColor: '#4CAF50',
-    borderRadius: 10,
+    backgroundColor: COLORS.primary,
+    borderRadius: RADII.md,
     paddingVertical: 12,
     alignItems: 'center',
   },
   emptyButtonText: {
-    color: '#fff',
+    color: COLORS.primaryContrast,
     fontSize: 16,
     fontWeight: 'bold',
   },
@@ -142,27 +143,20 @@ const styles = StyleSheet.create({
     height: 250,
   },
   content: {
-    padding: 16,
+    padding: SPACING.lg,
   },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 16,
+    color: COLORS.textPrimary,
+    marginBottom: SPACING.lg,
   },
   nutritionCard: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 16,
+    backgroundColor: COLORS.surface,
+    borderRadius: RADII.lg,
+    padding: SPACING.lg,
     marginBottom: 24,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    ...SHADOWS.soft,
   },
   nutritionRow: {
     flexDirection: 'row',
@@ -174,63 +168,49 @@ const styles = StyleSheet.create({
   nutritionValue: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#4CAF50',
+    color: COLORS.primary,
   },
   nutritionLabel: {
     fontSize: 12,
-    color: '#666',
-    marginTop: 4,
+    color: COLORS.textMuted,
+    marginTop: SPACING.xs,
   },
   metaCard: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 16,
+    backgroundColor: COLORS.surface,
+    borderRadius: RADII.lg,
+    padding: SPACING.lg,
     marginBottom: 24,
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    ...SHADOWS.soft,
   },
   metaItem: {
     width: '48%',
     marginBottom: 12,
   },
   metaLabel: {
-    color: '#666',
+    color: COLORS.textMuted,
     fontSize: 12,
     textTransform: 'uppercase',
-    marginBottom: 4,
+    marginBottom: SPACING.xs,
   },
   metaValue: {
-    color: '#333',
+    color: COLORS.textPrimary,
     fontSize: 16,
     fontWeight: '600',
   },
   section: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    backgroundColor: COLORS.surface,
+    borderRadius: RADII.lg,
+    padding: SPACING.lg,
+    marginBottom: SPACING.lg,
+    ...SHADOWS.soft,
   },
   sectionTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#333',
+    color: COLORS.textPrimary,
     marginBottom: 12,
   },
   listItem: {
@@ -240,19 +220,19 @@ const styles = StyleSheet.create({
   },
   bullet: {
     fontSize: 16,
-    color: '#4CAF50',
-    marginRight: 8,
+    color: COLORS.primary,
+    marginRight: SPACING.sm,
     width: 16,
   },
   stepNumber: {
     fontSize: 16,
-    color: '#4CAF50',
-    marginRight: 8,
+    color: COLORS.primary,
+    marginRight: SPACING.sm,
     width: 24,
   },
   listText: {
     fontSize: 16,
-    color: '#444',
+    color: COLORS.textSecondary,
     flex: 1,
     lineHeight: 24,
   },
