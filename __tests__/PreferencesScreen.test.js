@@ -34,6 +34,7 @@ describe('PreferencesScreen', () => {
     render(<PreferencesScreen />);
 
     expect(screen.getByText('Loading preferences...')).toBeTruthy();
+    expect(screen.getByLabelText('Loading saved dietary preferences')).toBeTruthy();
   });
 
   it('saves preferences and shows success feedback', async () => {
@@ -55,7 +56,10 @@ describe('PreferencesScreen', () => {
 
     render(<PreferencesScreen />);
 
-    fireEvent.press(screen.getByText('Save Preferences'));
+    expect(screen.getByLabelText('Vegan preference')).toBeTruthy();
+    expect(screen.getByLabelText('High Protein preference')).toBeTruthy();
+
+    fireEvent.press(screen.getByLabelText('Save dietary preferences'));
 
     await waitFor(() => {
       expect(savePreferences).toHaveBeenCalled();
