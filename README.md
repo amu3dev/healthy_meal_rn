@@ -148,25 +148,34 @@ Use these quick checks to verify the main product logic:
 
 ## Screenshots
 
-### Home
-
-![Home Screen](docs/screenshots/home.png)
-
-### Preferences
-
-![Preferences Screen](docs/screenshots/preferences.png)
-
-### Recipe Detail
-
-![Recipe Detail Screen](docs/screenshots/recipe-detail.png)
-
-### Instructions
-
-![Instructions Screen](docs/screenshots/instructions.png)
-
-### No Match State
-
-![No Match State](docs/screenshots/no-match.png)
+<table>
+  <tr>
+    <td align="center">
+      <strong>Home</strong><br />
+      <img src="docs/screenshots/home.png" alt="Home screen" width="280" />
+    </td>
+    <td align="center">
+      <strong>Preferences</strong><br />
+      <img src="docs/screenshots/preferences.png" alt="Preferences screen" width="280" />
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <strong>Recipe Detail</strong><br />
+      <img src="docs/screenshots/recipe-detail.png" alt="Recipe detail screen" width="280" />
+    </td>
+    <td align="center">
+      <strong>Instructions</strong><br />
+      <img src="docs/screenshots/instructions.png" alt="Instructions screen" width="280" />
+    </td>
+  </tr>
+  <tr>
+    <td align="center" colspan="2">
+      <strong>No Match State</strong><br />
+      <img src="docs/screenshots/no-match.png" alt="No match state" width="280" />
+    </td>
+  </tr>
+</table>
 
 ## Resume-Friendly Highlights
 
