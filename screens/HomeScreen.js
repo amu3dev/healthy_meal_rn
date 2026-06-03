@@ -54,7 +54,11 @@ export default function HomeScreen({ navigation }) {
 
   if (isLoading) {
     return (
-      <View style={styles.loadingContainer}>
+      <View
+        style={styles.loadingContainer}
+        accessibilityRole="progressbar"
+        accessibilityLabel="Loading today's healthy meal"
+      >
         <Text>Loading...</Text>
       </View>
     );
@@ -72,6 +76,8 @@ export default function HomeScreen({ navigation }) {
         <TouchableOpacity
           style={styles.preferencesButton}
           onPress={() => navigation.navigate('Preferences')}
+          accessibilityRole="button"
+          accessibilityLabel="Open dietary preferences"
         >
           <MaterialIcons name="settings" size={24} color={COLORS.primary} />
         </TouchableOpacity>
@@ -83,6 +89,8 @@ export default function HomeScreen({ navigation }) {
         <TouchableOpacity
           style={styles.card}
           onPress={() => navigation.navigate('RecipeDetail', { mealId: meal.id })}
+          accessibilityRole="button"
+          accessibilityLabel={`Open recipe details for ${meal.name}`}
         >
           <MealImage
             uri={meal.image}
@@ -125,6 +133,8 @@ export default function HomeScreen({ navigation }) {
           <TouchableOpacity
             style={styles.emptyButton}
             onPress={() => navigation.navigate('Preferences')}
+            accessibilityRole="button"
+            accessibilityLabel="Review dietary preferences"
           >
             <Text style={styles.emptyButtonText}>Review Preferences</Text>
           </TouchableOpacity>
