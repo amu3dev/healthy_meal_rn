@@ -12,7 +12,8 @@ This project is now beyond the original tutorial-style prototype stage. It curre
 - canonical meal lookup by `mealId` instead of passing full objects through navigation
 - resilient remote image rendering with loading and fallback states
 - shared theme tokens for colors, spacing, radii, and card shadows
-- 9 Jest test suites covering logic, data integrity, hooks, components, screen behavior, and one integration seam
+- accessibility labels and loading semantics for key interactive flows
+- 9 Jest test suites and 31 automated tests covering logic, data integrity, hooks, components, screen behavior, and one integration seam
 - a GitHub Actions workflow that validates the repo on every push and pull request
 
 ## Why This Project Stands Out
@@ -22,6 +23,7 @@ This project is now beyond the original tutorial-style prototype stage. It curre
 - Uses deterministic daily selection instead of random reshuffling on every refresh.
 - Resolves recipe detail screens from a canonical data source using `mealId`.
 - Handles remote image failures gracefully with cached image loading and fallback UI.
+- Includes accessibility labels for key buttons, switches, and loading states.
 - Handles no-match and missing-data states instead of only the happy path.
 - Ships with a lightweight GitHub Actions workflow to validate the repo on every push and pull request.
 
@@ -35,6 +37,7 @@ This project is now beyond the original tutorial-style prototype stage. It curre
 - Expanded meal metadata including prep time, difficulty, cuisine, servings, and fiber
 - Cached image loading with loading indicators and graceful fallback cards
 - Empty-state guidance when no meals match the selected preferences
+- Accessibility labels on key interactive elements and progress semantics for loading states
 - Pull-to-refresh that reloads the current daily selection logic
 
 ## Tech Stack
@@ -74,6 +77,13 @@ This project is now beyond the original tutorial-style prototype stage. It curre
 │   └── MealImage.js
 ├── data/
 │   └── meals.js
+├── docs/
+│   └── screenshots/
+│       ├── home.png
+│       ├── instructions.png
+│       ├── no-match.png
+│       ├── preferences.png
+│       └── recipe-detail.png
 ├── hooks/
 │   └── usePreferences.js
 ├── lib/
@@ -181,7 +191,7 @@ Use these quick checks to verify the main product logic:
 
 - Designed and implemented a mobile meal recommendation flow using Expo and React Native.
 - Built client-side persistence and preference-aware filtering logic with reusable shared hooks.
-- Improved product reliability by adding graceful empty/error states, deterministic daily behavior, and resilient image fallbacks.
+- Improved product reliability by adding graceful empty/error states, deterministic daily behavior, resilient image fallbacks, and accessibility-aware UI labels.
 - Added automated testing for core logic, data integrity, hooks, components, and screen behavior.
 - Added an integration-style Home test to verify the real storage-to-selection-to-render path.
 - Added repository automation with GitHub Actions to validate dependency compatibility and source integrity.
