@@ -272,7 +272,7 @@ const MEALS = [
     difficulty: 'Medium',
     cuisine: 'Mediterranean',
     servings: 4,
-    image: 'https://images.unsplash.com/photo-1604908554027-1b0f4f4c5c64?w=500',
+    image: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=500',
     ingredients: [
       '4 bell peppers',
       '1 cup cooked lentils',
@@ -383,7 +383,7 @@ const MEALS = [
     difficulty: 'Easy',
     cuisine: 'Mexican-Inspired',
     servings: 2,
-    image: 'https://images.unsplash.com/photo-1543332164-6e82f355badc?w=500',
+    image: 'https://images.unsplash.com/photo-1512852939750-1305098529bf?w=500',
     ingredients: [
       'Romaine lettuce',
       'Black beans',
@@ -715,7 +715,7 @@ const MEALS = [
     difficulty: 'Easy',
     cuisine: 'Mediterranean',
     servings: 3,
-    image: 'https://images.unsplash.com/photo-1547592180-3b5c8f4a8c0f?w=500',
+    image: 'https://images.unsplash.com/photo-1515003197210-e0cd71810b5f?ixid=smoky-white-bean-skillet&w=500',
     ingredients: [
       '2 cans white beans',
       'Smoked paprika',
