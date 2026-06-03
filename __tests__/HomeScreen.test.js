@@ -46,6 +46,7 @@ describe('HomeScreen', () => {
     render(<HomeScreen navigation={mockNavigation} />);
 
     expect(screen.getByText('Loading...')).toBeTruthy();
+    expect(screen.getByLabelText("Loading today's healthy meal")).toBeTruthy();
   });
 
   it('renders the no-match empty state when filters produce no meal', async () => {
@@ -66,7 +67,7 @@ describe('HomeScreen', () => {
     });
 
     expect(screen.getByText('No meals match your current filters yet')).toBeTruthy();
-    fireEvent.press(screen.getByText('Review Preferences'));
+    fireEvent.press(screen.getByLabelText('Review dietary preferences'));
     expect(mockNavigation.navigate).toHaveBeenCalledWith('Preferences');
   });
 
@@ -96,7 +97,8 @@ describe('HomeScreen', () => {
       expect(screen.getByText('Turkey Lettuce Wraps')).toBeTruthy();
     });
 
-    fireEvent.press(screen.getByText('Turkey Lettuce Wraps'));
+    expect(screen.getByLabelText('Open dietary preferences')).toBeTruthy();
+    fireEvent.press(screen.getByLabelText('Open recipe details for Turkey Lettuce Wraps'));
     expect(mockNavigation.navigate).toHaveBeenCalledWith('RecipeDetail', { mealId: 4 });
   });
 });
