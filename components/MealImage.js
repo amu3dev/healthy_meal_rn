@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { Image as ExpoImage } from 'expo-image';
+import { COLORS } from '../lib/theme';
 
 export default function MealImage({
   uri,
@@ -52,7 +53,7 @@ export default function MealImage({
 
       {isLoading ? (
         <View style={styles.loadingOverlay}>
-          <ActivityIndicator size="small" color="#4CAF50" />
+          <ActivityIndicator size="small" color={COLORS.primary} />
         </View>
       ) : null}
     </View>
@@ -62,7 +63,7 @@ export default function MealImage({
 const styles = StyleSheet.create({
   container: {
     overflow: 'hidden',
-    backgroundColor: '#e9efe7',
+    backgroundColor: COLORS.imageFallbackBackground,
   },
   fallbackContainer: {
     alignItems: 'center',
@@ -70,13 +71,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   fallbackTitle: {
-    color: '#2f4636',
+    color: COLORS.imageFallbackTitle,
     fontSize: 18,
     fontWeight: '700',
     textAlign: 'center',
   },
   fallbackSubtitle: {
-    color: '#5f7366',
+    color: COLORS.imageFallbackSubtitle,
     fontSize: 13,
     marginTop: 8,
     textAlign: 'center',
@@ -85,6 +86,6 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.65)',
+    backgroundColor: COLORS.overlay,
   },
 });
