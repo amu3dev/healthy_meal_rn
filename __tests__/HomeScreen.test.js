@@ -101,4 +101,34 @@ describe('HomeScreen', () => {
     fireEvent.press(screen.getByLabelText('Open recipe details for Turkey Lettuce Wraps'));
     expect(mockNavigation.navigate).toHaveBeenCalledWith('RecipeDetail', { mealId: 4 });
   });
+
+  it('navigates to the explore gallery from the daily meal screen', async () => {
+    const meal = {
+      id: 2,
+      name: 'Grilled Salmon with Roasted Vegetables',
+      calories: 520,
+      protein: '42g',
+      carbs: '18g',
+      fats: '28g',
+      prepTime: '30 min',
+      difficulty: 'Medium',
+      cuisine: 'American',
+      image: 'https://example.com/salmon.jpg',
+    };
+
+    runFocusEffect();
+    usePreferences.mockReturnValue({
+      loadPreferences: jest.fn().mockResolvedValue({}),
+    });
+    getDailyMeal.mockReturnValue(meal);
+
+    render(<HomeScreen navigation={mockNavigation} />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Want more ideas?')).toBeTruthy();
+    });
+
+    fireEvent.press(screen.getByLabelText('Explore more meal ideas'));
+    expect(mockNavigation.navigate).toHaveBeenCalledWith('Explore');
+  });
 });
