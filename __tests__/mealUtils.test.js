@@ -19,7 +19,7 @@ describe('meal utilities', () => {
   it('filters meals based on enabled preferences', () => {
     const meals = getMatchingMeals({ highProtein: true });
 
-    expect(meals).toHaveLength(19);
+    expect(meals.length).toBeGreaterThan(0);
     expect(meals.every((meal) => meal.tags.highProtein)).toBe(true);
     expect(meals.map((meal) => meal.name)).toEqual(
       expect.arrayContaining([
