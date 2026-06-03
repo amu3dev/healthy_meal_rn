@@ -1,6 +1,7 @@
 import React from 'react';
 import { Alert, View, Text, StyleSheet, ScrollView, Switch, TouchableOpacity } from 'react-native';
 import { DEFAULT_PREFERENCES, formatPreferenceLabel } from '../lib/preferences';
+import { COLORS, RADII, SHADOWS, SPACING } from '../lib/theme';
 import usePreferences from '../hooks/usePreferences';
 
 export default function PreferencesScreen() {
@@ -42,8 +43,8 @@ export default function PreferencesScreen() {
             <Switch
               value={preferences[key]}
               onValueChange={() => togglePreference(key)}
-              trackColor={{ false: '#767577', true: '#81b0ff' }}
-              thumbColor={preferences[key] ? '#4CAF50' : '#f4f3f4'}
+              trackColor={{ false: COLORS.switchTrackOff, true: COLORS.switchTrackOn }}
+              thumbColor={preferences[key] ? COLORS.primary : COLORS.switchThumbOff}
             />
           </View>
         ))}
@@ -66,33 +67,26 @@ export default function PreferencesScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: COLORS.background,
   },
   loadingContainer: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: COLORS.background,
     alignItems: 'center',
     justifyContent: 'center',
   },
   section: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 16,
-    margin: 16,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    backgroundColor: COLORS.surface,
+    borderRadius: RADII.lg,
+    padding: SPACING.lg,
+    margin: SPACING.lg,
+    ...SHADOWS.soft,
   },
   sectionTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 16,
+    color: COLORS.textPrimary,
+    marginBottom: SPACING.lg,
   },
   preferenceItem: {
     flexDirection: 'row',
@@ -100,28 +94,28 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
+    borderBottomColor: COLORS.border,
   },
   preferenceLabel: {
     fontSize: 16,
-    color: '#444',
+    color: COLORS.textSecondary,
   },
   saveButton: {
-    backgroundColor: '#4CAF50',
-    borderRadius: 8,
-    padding: 16,
-    margin: 16,
+    backgroundColor: COLORS.primary,
+    borderRadius: RADII.sm,
+    padding: SPACING.lg,
+    margin: SPACING.lg,
     alignItems: 'center',
   },
   saveButtonText: {
-    color: '#fff',
+    color: COLORS.primaryContrast,
     fontSize: 16,
     fontWeight: 'bold',
   },
   note: {
-    margin: 16,
+    margin: SPACING.lg,
     textAlign: 'center',
-    color: '#666',
+    color: COLORS.textMuted,
     fontSize: 14,
   },
 });
