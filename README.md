@@ -78,7 +78,9 @@ This project is now beyond the original tutorial-style prototype stage. It curre
 │   └── usePreferences.js
 ├── lib/
 │   ├── mealUtils.js
-│   └── preferences.js
+│   ├── preferences.js
+│   ├── theme.js
+│   └── types.js
 ├── screens/
 │   ├── HomeScreen.js
 │   ├── PreferencesScreen.js
@@ -90,7 +92,7 @@ This project is now beyond the original tutorial-style prototype stage. It curre
 │   ├── mealUtils.test.js
 │   ├── mealsData.test.js
 │   ├── MealImage.test.js
-│   └── preferences.test.js
+│   ├── preferences.test.js
 │   └── usePreferences.test.js
 └── assets/
 ```
