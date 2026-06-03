@@ -33,8 +33,9 @@ describe('RecipeDetailScreen', () => {
     );
 
     expect(screen.getByText('Recipe unavailable')).toBeTruthy();
+    expect(screen.getByLabelText('Go back to the previous screen')).toBeTruthy();
 
-    fireEvent.press(screen.getByText('Go Back'));
+    fireEvent.press(screen.getByLabelText('Go back to the previous screen'));
     expect(mockNavigation.goBack).toHaveBeenCalled();
   });
 });
