@@ -26,6 +26,53 @@ This project is now beyond the original tutorial-style prototype stage. It curre
   <em>Quick preview of the daily meal flow, preferences update, Explore gallery, and recipe detail experience.</em>
 </p>
 
+## Screenshots
+
+<table>
+  <tr>
+    <td align="center">
+      <strong>Home</strong><br />
+      <img src="docs/screenshots/home.png" alt="Home screen" width="280" />
+    </td>
+    <td align="center">
+      <strong>Preferences</strong><br />
+      <img src="docs/screenshots/preferences.png" alt="Preferences screen" width="280" />
+    </td>
+    <td align="center">
+      <strong>Preferences With Filters</strong><br />
+      <img src="docs/screenshots/preferences-on.png" alt="Preferences screen with filters enabled" width="280" />
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <strong>Explore Gallery</strong><br />
+      <img src="docs/screenshots/explore-1.png" alt="Explore gallery screen" width="280" />
+    </td>
+    <td align="center">
+      <strong>Explore Gallery Alt</strong><br />
+      <img src="docs/screenshots/explore-2.png" alt="Alternate explore gallery screen" width="280" />
+    </td>
+    <td align="center">
+      <strong>Shuffle Mix</strong><br />
+      <img src="docs/screenshots/shuffle-mix.png" alt="Explore shuffle mix screen" width="280" />
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <strong>Recipe Detail</strong><br />
+      <img src="docs/screenshots/recipe-detail.png" alt="Recipe detail screen" width="280" />
+    </td>
+    <td align="center">
+      <strong>Recipe Instructions</strong><br />
+      <img src="docs/screenshots/instruc-ingred.png" alt="Recipe instructions screen" width="280" />
+    </td>
+    <td align="center">
+      <strong>No Match State</strong><br />
+      <img src="docs/screenshots/no-match.png" alt="No match state" width="280" />
+    </td>
+  </tr>
+</table>
+
 ## Why This Project Stands Out
 
 - Builds a complete multi-screen mobile flow with React Navigation.
@@ -177,53 +224,6 @@ Use these quick checks to verify the main product logic:
 7. Use `Shuffle Mix` in Explore and confirm the gallery resets to a fresh order.
 8. Tap a meal card and confirm Recipe Detail opens correctly from `mealId`-based navigation.
 9. Temporarily break a meal image URL and confirm the fallback image card appears instead of a blank broken image.
-
-## Screenshots
-
-<table>
-  <tr>
-    <td align="center">
-      <strong>Home</strong><br />
-      <img src="docs/screenshots/home.png" alt="Home screen" width="280" />
-    </td>
-    <td align="center">
-      <strong>Preferences</strong><br />
-      <img src="docs/screenshots/preferences.png" alt="Preferences screen" width="280" />
-    </td>
-    <td align="center">
-      <strong>Preferences With Filters</strong><br />
-      <img src="docs/screenshots/preferences-on.png" alt="Preferences screen with filters enabled" width="280" />
-    </td>
-  </tr>
-  <tr>
-    <td align="center">
-      <strong>Explore Gallery</strong><br />
-      <img src="docs/screenshots/explore-1.png" alt="Explore gallery screen" width="280" />
-    </td>
-    <td align="center">
-      <strong>Explore Gallery Alt</strong><br />
-      <img src="docs/screenshots/explore-2.png" alt="Alternate explore gallery screen" width="280" />
-    </td>
-    <td align="center">
-      <strong>Shuffle Mix</strong><br />
-      <img src="docs/screenshots/shuffle-mix.png" alt="Explore shuffle mix screen" width="280" />
-    </td>
-  </tr>
-  <tr>
-    <td align="center">
-      <strong>Recipe Detail</strong><br />
-      <img src="docs/screenshots/recipe-detail.png" alt="Recipe detail screen" width="280" />
-    </td>
-    <td align="center">
-      <strong>Recipe Instructions</strong><br />
-      <img src="docs/screenshots/instruc-ingred.png" alt="Recipe instructions screen" width="280" />
-    </td>
-    <td align="center">
-      <strong>No Match State</strong><br />
-      <img src="docs/screenshots/no-match.png" alt="No match state" width="280" />
-    </td>
-  </tr>
-</table>
 
 ## Resume-Friendly Highlights
 
