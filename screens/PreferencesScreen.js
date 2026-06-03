@@ -24,7 +24,11 @@ export default function PreferencesScreen() {
 
   if (isLoading) {
     return (
-      <View style={styles.loadingContainer}>
+      <View
+        style={styles.loadingContainer}
+        accessibilityRole="progressbar"
+        accessibilityLabel="Loading saved dietary preferences"
+      >
         <Text>Loading preferences...</Text>
       </View>
     );
@@ -45,6 +49,7 @@ export default function PreferencesScreen() {
               onValueChange={() => togglePreference(key)}
               trackColor={{ false: COLORS.switchTrackOff, true: COLORS.switchTrackOn }}
               thumbColor={preferences[key] ? COLORS.primary : COLORS.switchThumbOff}
+              accessibilityLabel={`${formatPreferenceLabel(key)} preference`}
             />
           </View>
         ))}
@@ -53,6 +58,8 @@ export default function PreferencesScreen() {
       <TouchableOpacity
         style={styles.saveButton}
         onPress={handleSavePreferences}
+        accessibilityRole="button"
+        accessibilityLabel="Save dietary preferences"
       >
         <Text style={styles.saveButtonText}>Save Preferences</Text>
       </TouchableOpacity>
