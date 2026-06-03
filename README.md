@@ -82,6 +82,8 @@ This project is now beyond the original tutorial-style prototype stage. It curre
 │   └── meals.js
 ├── docs/
 │   └── screenshots/
+│       ├── demo.gif
+│       ├── demo.mov
 │       ├── explore-1.png
 │       ├── explore-2.png
 │       ├── home.png
@@ -167,6 +169,10 @@ Use these quick checks to verify the main product logic:
 8. Tap a meal card and confirm Recipe Detail opens correctly from `mealId`-based navigation.
 9. Temporarily break a meal image URL and confirm the fallback image card appears instead of a blank broken image.
 
+## Demo
+
+![Healthy Meal RN Demo](docs/screenshots/demo.gif)
+
 ## Screenshots
 
 <table>
@@ -227,6 +233,5 @@ Use these quick checks to verify the main product logic:
 
 ## Next Improvements
 
-- Add a short demo GIF for the repository landing page
 - Move from JSDoc typedefs to TypeScript if the project grows further
 - Connect to a backend or CMS for dynamic meal content
