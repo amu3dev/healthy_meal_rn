@@ -17,6 +17,10 @@ This project is now beyond the original tutorial-style prototype stage. It curre
 - 10 Jest test suites and 34 automated tests covering logic, data integrity, hooks, components, screen behavior, and one integration seam
 - a GitHub Actions workflow that validates the repo on every push and pull request
 
+## Demo
+
+![Healthy Meal RN Demo](docs/screenshots/demo.gif)
+
 ## Why This Project Stands Out
 
 - Builds a complete multi-screen mobile flow with React Navigation.
@@ -169,10 +173,6 @@ Use these quick checks to verify the main product logic:
 8. Tap a meal card and confirm Recipe Detail opens correctly from `mealId`-based navigation.
 9. Temporarily break a meal image URL and confirm the fallback image card appears instead of a blank broken image.
 
-## Demo
-
-![Healthy Meal RN Demo](docs/screenshots/demo.gif)
-
 ## Screenshots
 
 <table>
@@ -215,7 +215,7 @@ Use these quick checks to verify the main product logic:
     </td>
   </tr>
   <tr>
-    <td align="center">
+    <td align="center" colspan="3">
       <strong>No Match State</strong><br />
       <img src="docs/screenshots/no-match.png" alt="No match state" width="280" />
     </td>
