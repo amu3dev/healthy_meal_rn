@@ -146,6 +146,28 @@ Use these quick checks to verify the main product logic:
 6. Tap a meal card and confirm Recipe Detail opens correctly from `mealId`-based navigation.
 7. Temporarily break a meal image URL and confirm the fallback image card appears instead of a blank broken image.
 
+## Screenshots
+
+### Home
+
+![Home Screen](docs/screenshots/home.png)
+
+### Preferences
+
+![Preferences Screen](docs/screenshots/preferences.png)
+
+### Recipe Detail
+
+![Recipe Detail Screen](docs/screenshots/recipe-detail.png)
+
+### Instructions
+
+![Instructions Screen](docs/screenshots/instructions.png)
+
+### No Match State
+
+![No Match State](docs/screenshots/no-match.png)
+
 ## Resume-Friendly Highlights
 
 - Designed and implemented a mobile meal recommendation flow using Expo and React Native.
@@ -157,6 +179,6 @@ Use these quick checks to verify the main product logic:
 
 ## Next Improvements
 
-- Add screenshots or a short demo GIF for the repository landing page
+- Add a short demo GIF for the repository landing page
 - Move from JSDoc typedefs to TypeScript if the project grows further
 - Connect to a backend or CMS for dynamic meal content
