@@ -18,6 +18,8 @@ export default function RecipeDetailScreen({ navigation, route }) {
         <TouchableOpacity
           style={styles.emptyButton}
           onPress={() => navigation.goBack()}
+          accessibilityRole="button"
+          accessibilityLabel="Go back to the previous screen"
         >
           <Text style={styles.emptyButtonText}>Go Back</Text>
         </TouchableOpacity>
