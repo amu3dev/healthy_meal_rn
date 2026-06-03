@@ -11,7 +11,8 @@ This project is now beyond the original tutorial-style prototype stage. It curre
 - shared preference state access through a reusable hook
 - canonical meal lookup by `mealId` instead of passing full objects through navigation
 - resilient remote image rendering with loading and fallback states
-- 5 Jest test suites covering both pure logic and screen-level behavior
+- shared theme tokens for colors, spacing, radii, and card shadows
+- 8 Jest test suites covering logic, data integrity, hooks, components, and screen-level behavior
 - a GitHub Actions workflow that validates the repo on every push and pull request
 
 ## Why This Project Stands Out
@@ -44,6 +45,7 @@ This project is now beyond the original tutorial-style prototype stage. It curre
 - AsyncStorage for local persistence
 - `expo-image` for cached remote image rendering
 - Jest + React Native Testing Library for automated tests
+- lightweight shared design tokens through `lib/theme.js`
 
 ## Architecture Notes
 
@@ -53,6 +55,10 @@ This project is now beyond the original tutorial-style prototype stage. It curre
   Contains deterministic daily meal selection, filtering, summary generation, and canonical meal lookup.
 - `lib/preferences.js`
   Contains preference defaults, normalization helpers, and formatting helpers.
+- `lib/theme.js`
+  Centralizes shared colors, spacing, radii, and shadow styles.
+- `lib/types.js`
+  Documents the `Meal` and `Preferences` shapes with lightweight JSDoc typedefs.
 - `hooks/usePreferences.js`
   Centralizes AsyncStorage-backed preference load/save/toggle behavior.
 - `components/MealImage.js`
@@ -82,7 +88,10 @@ This project is now beyond the original tutorial-style prototype stage. It curre
 │   ├── PreferencesScreen.test.js
 │   ├── RecipeDetailScreen.test.js
 │   ├── mealUtils.test.js
+│   ├── mealsData.test.js
+│   ├── MealImage.test.js
 │   └── preferences.test.js
+│   └── usePreferences.test.js
 └── assets/
 ```
 
@@ -111,7 +120,8 @@ This currently verifies:
 
 - JavaScript syntax across the app source
 - Expo dependency compatibility with the installed SDK
-- Pure logic tests for meal selection and preferences
+- Pure logic and data validation tests for meal selection, preferences, and meal catalog integrity
+- Direct abstraction tests for `usePreferences` and `MealImage`
 - Screen-level behavior for Home, Preferences, and Recipe Detail
 
 You can also run tests directly with:
@@ -137,12 +147,12 @@ Use these quick checks to verify the main product logic:
 - Designed and implemented a mobile meal recommendation flow using Expo and React Native.
 - Built client-side persistence and preference-aware filtering logic with reusable shared hooks.
 - Improved product reliability by adding graceful empty/error states, deterministic daily behavior, and resilient image fallbacks.
-- Added automated testing for both core logic and screen behavior.
+- Added automated testing for core logic, data integrity, hooks, components, and screen behavior.
 - Added repository automation with GitHub Actions to validate dependency compatibility and source integrity.
 
 ## Next Improvements
 
 - Add screenshots or a short demo GIF for the repository landing page
-- Pin `@react-native-community/cli` to a stable version instead of `latest`
-- Add JSDoc typedefs or move to TypeScript when the project grows further
+- Add a small integration-style test around the full Home load -> meal selection flow
+- Move from JSDoc typedefs to TypeScript if the project grows further
 - Connect to a backend or CMS for dynamic meal content
