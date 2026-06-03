@@ -89,7 +89,8 @@ This project is now beyond the original tutorial-style prototype stage. It curre
 │       ├── no-match.png
 │       ├── preferences-on.png
 │       ├── preferences.png
-│       └── recipe-detail.png
+│       ├── recipe-detail.png
+│       └── shuffle-mix.png
 ├── hooks/
 │   └── usePreferences.js
 ├── lib/
@@ -175,18 +176,26 @@ Use these quick checks to verify the main product logic:
       <img src="docs/screenshots/home.png" alt="Home screen" width="280" />
     </td>
     <td align="center">
-      <strong>Explore Gallery</strong><br />
-      <img src="docs/screenshots/explore-1.png" alt="Explore gallery screen" width="280" />
+      <strong>Preferences</strong><br />
+      <img src="docs/screenshots/preferences.png" alt="Preferences screen" width="280" />
+    </td>
+    <td align="center">
+      <strong>Preferences With Filters</strong><br />
+      <img src="docs/screenshots/preferences-on.png" alt="Preferences screen with filters enabled" width="280" />
     </td>
   </tr>
   <tr>
     <td align="center">
-      <strong>Shuffle Mix</strong><br />
-      <img src="docs/screenshots/shuffle-mix.png" alt="Explore shuffle mix screen" width="280" />
+      <strong>Explore Gallery</strong><br />
+      <img src="docs/screenshots/explore-1.png" alt="Explore gallery screen" width="280" />
     </td>
     <td align="center">
-      <strong>Preferences</strong><br />
-      <img src="docs/screenshots/preferences-on.png" alt="Preferences screen with filters enabled" width="280" />
+      <strong>Explore Gallery Alt</strong><br />
+      <img src="docs/screenshots/explore-2.png" alt="Alternate explore gallery screen" width="280" />
+    </td>
+    <td align="center">
+      <strong>Shuffle Mix</strong><br />
+      <img src="docs/screenshots/shuffle-mix.png" alt="Explore shuffle mix screen" width="280" />
     </td>
   </tr>
   <tr>
@@ -200,7 +209,7 @@ Use these quick checks to verify the main product logic:
     </td>
   </tr>
   <tr>
-    <td align="center" colspan="2">
+    <td align="center">
       <strong>No Match State</strong><br />
       <img src="docs/screenshots/no-match.png" alt="No match state" width="280" />
     </td>
