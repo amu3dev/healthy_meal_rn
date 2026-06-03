@@ -6,14 +6,15 @@ Healthy Meal RN is an Expo + React Native app that suggests a deterministic heal
 
 This project is now beyond the original tutorial-style prototype stage. It currently includes:
 
-- 3 production-like screens wired through React Navigation
+- 4 production-like screens wired through React Navigation
 - a 25-meal catalog with broader dietary coverage
 - shared preference state access through a reusable hook
 - canonical meal lookup by `mealId` instead of passing full objects through navigation
+- a separate Explore gallery so users can browse more meals without breaking the daily-pick concept
 - resilient remote image rendering with loading and fallback states
 - shared theme tokens for colors, spacing, radii, and card shadows
 - accessibility labels and loading semantics for key interactive flows
-- 9 Jest test suites and 31 automated tests covering logic, data integrity, hooks, components, screen behavior, and one integration seam
+- 10 Jest test suites and 34 automated tests covering logic, data integrity, hooks, components, screen behavior, and one integration seam
 - a GitHub Actions workflow that validates the repo on every push and pull request
 
 ## Why This Project Stands Out
@@ -22,6 +23,7 @@ This project is now beyond the original tutorial-style prototype stage. It curre
 - Persists user preferences locally with AsyncStorage through a shared `usePreferences` hook.
 - Uses deterministic daily selection instead of random reshuffling on every refresh.
 - Resolves recipe detail screens from a canonical data source using `mealId`.
+- Separates the stable daily recommendation from a swipeable Explore gallery.
 - Handles remote image failures gracefully with cached image loading and fallback UI.
 - Includes accessibility labels for key buttons, switches, and loading states.
 - Handles no-match and missing-data states instead of only the happy path.
@@ -30,6 +32,7 @@ This project is now beyond the original tutorial-style prototype stage. It curre
 ## Features
 
 - Daily healthy meal suggestion on the home screen
+- Swipeable Explore gallery with `Previous`, `Next`, and `Shuffle Mix` controls
 - Dietary filters for vegetarian, vegan, gluten-free, dairy-free, low-carb, and high-protein preferences
 - 25-meal catalog with broader coverage across common dietary combinations
 - Persistent preferences saved on device
@@ -92,10 +95,12 @@ This project is now beyond the original tutorial-style prototype stage. It curre
 │   ├── theme.js
 │   └── types.js
 ├── screens/
+│   ├── ExploreScreen.js
 │   ├── HomeScreen.js
 │   ├── PreferencesScreen.js
 │   └── RecipeDetailScreen.js
 ├── __tests__/
+│   ├── ExploreScreen.test.js
 │   ├── HomeScreen.test.js
 │   ├── HomeScreen.integration.test.js
 │   ├── PreferencesScreen.test.js
@@ -135,7 +140,7 @@ This currently verifies:
 - Expo dependency compatibility with the installed SDK
 - Pure logic and data validation tests for meal selection, preferences, and meal catalog integrity
 - Direct abstraction tests for `usePreferences` and `MealImage`
-- Screen-level behavior for Home, Preferences, and Recipe Detail
+- Screen-level behavior for Explore, Home, Preferences, and Recipe Detail
 - One integration-style Home test covering `AsyncStorage -> preferences load -> daily meal render`
 
 You can also run tests directly with:
@@ -153,8 +158,10 @@ Use these quick checks to verify the main product logic:
 3. Enable `Vegan` and confirm a vegan meal is shown.
 4. Enable `Vegan` + `High Protein` + `Low Carb` + `Gluten Free` and confirm the no-match empty state appears.
 5. Return to Preferences, loosen filters, and confirm a meal appears again.
-6. Tap a meal card and confirm Recipe Detail opens correctly from `mealId`-based navigation.
-7. Temporarily break a meal image URL and confirm the fallback image card appears instead of a blank broken image.
+6. Open `Explore More Meals` from Home and confirm you can swipe between matching meals.
+7. Use `Shuffle Mix` in Explore and confirm the gallery resets to a fresh order.
+8. Tap a meal card and confirm Recipe Detail opens correctly from `mealId`-based navigation.
+9. Temporarily break a meal image URL and confirm the fallback image card appears instead of a blank broken image.
 
 ## Screenshots
 
@@ -191,7 +198,7 @@ Use these quick checks to verify the main product logic:
 
 - Designed and implemented a mobile meal recommendation flow using Expo and React Native.
 - Built client-side persistence and preference-aware filtering logic with reusable shared hooks.
-- Improved product reliability by adding graceful empty/error states, deterministic daily behavior, resilient image fallbacks, and accessibility-aware UI labels.
+- Improved product reliability by adding graceful empty/error states, deterministic daily behavior, a separate Explore flow, resilient image fallbacks, and accessibility-aware UI labels.
 - Added automated testing for core logic, data integrity, hooks, components, and screen behavior.
 - Added an integration-style Home test to verify the real storage-to-selection-to-render path.
 - Added repository automation with GitHub Actions to validate dependency compatibility and source integrity.
