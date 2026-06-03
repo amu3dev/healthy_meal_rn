@@ -12,7 +12,7 @@ This project is now beyond the original tutorial-style prototype stage. It curre
 - canonical meal lookup by `mealId` instead of passing full objects through navigation
 - resilient remote image rendering with loading and fallback states
 - shared theme tokens for colors, spacing, radii, and card shadows
-- 8 Jest test suites covering logic, data integrity, hooks, components, and screen-level behavior
+- 9 Jest test suites covering logic, data integrity, hooks, components, screen behavior, and one integration seam
 - a GitHub Actions workflow that validates the repo on every push and pull request
 
 ## Why This Project Stands Out
@@ -87,6 +87,7 @@ This project is now beyond the original tutorial-style prototype stage. It curre
 │   └── RecipeDetailScreen.js
 ├── __tests__/
 │   ├── HomeScreen.test.js
+│   ├── HomeScreen.integration.test.js
 │   ├── PreferencesScreen.test.js
 │   ├── RecipeDetailScreen.test.js
 │   ├── mealUtils.test.js
@@ -125,6 +126,7 @@ This currently verifies:
 - Pure logic and data validation tests for meal selection, preferences, and meal catalog integrity
 - Direct abstraction tests for `usePreferences` and `MealImage`
 - Screen-level behavior for Home, Preferences, and Recipe Detail
+- One integration-style Home test covering `AsyncStorage -> preferences load -> daily meal render`
 
 You can also run tests directly with:
 
@@ -150,11 +152,11 @@ Use these quick checks to verify the main product logic:
 - Built client-side persistence and preference-aware filtering logic with reusable shared hooks.
 - Improved product reliability by adding graceful empty/error states, deterministic daily behavior, and resilient image fallbacks.
 - Added automated testing for core logic, data integrity, hooks, components, and screen behavior.
+- Added an integration-style Home test to verify the real storage-to-selection-to-render path.
 - Added repository automation with GitHub Actions to validate dependency compatibility and source integrity.
 
 ## Next Improvements
 
 - Add screenshots or a short demo GIF for the repository landing page
-- Add a small integration-style test around the full Home load -> meal selection flow
 - Move from JSDoc typedefs to TypeScript if the project grows further
 - Connect to a backend or CMS for dynamic meal content
