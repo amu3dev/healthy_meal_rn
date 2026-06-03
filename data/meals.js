@@ -1,3 +1,4 @@
+/** @type {import('../lib/types').Meal[]} */
 const MEALS = [
   {
     id: 1,
