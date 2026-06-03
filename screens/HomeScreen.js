@@ -86,44 +86,61 @@ export default function HomeScreen({ navigation }) {
       <Text style={styles.summaryText}>{statusMessage}</Text>
 
       {meal ? (
-        <TouchableOpacity
-          style={styles.card}
-          onPress={() => navigation.navigate('RecipeDetail', { mealId: meal.id })}
-          accessibilityRole="button"
-          accessibilityLabel={`Open recipe details for ${meal.name}`}
-        >
-          <MealImage
-            uri={meal.image}
-            label={meal.name}
-            style={styles.mealImage}
-          />
-          <View style={styles.mealInfo}>
-            <Text style={styles.mealName}>{meal.name}</Text>
+        <>
+          <TouchableOpacity
+            style={styles.card}
+            onPress={() => navigation.navigate('RecipeDetail', { mealId: meal.id })}
+            accessibilityRole="button"
+            accessibilityLabel={`Open recipe details for ${meal.name}`}
+          >
+            <MealImage
+              uri={meal.image}
+              label={meal.name}
+              style={styles.mealImage}
+            />
+            <View style={styles.mealInfo}>
+              <Text style={styles.mealName}>{meal.name}</Text>
 
-            <View style={styles.nutritionContainer}>
-              <View style={styles.nutritionItem}>
-                <Text style={styles.nutritionValue}>{meal.calories}</Text>
-                <Text style={styles.nutritionLabel}>calories</Text>
+              <View style={styles.nutritionContainer}>
+                <View style={styles.nutritionItem}>
+                  <Text style={styles.nutritionValue}>{meal.calories}</Text>
+                  <Text style={styles.nutritionLabel}>calories</Text>
+                </View>
+                <View style={styles.nutritionItem}>
+                  <Text style={styles.nutritionValue}>{meal.protein}</Text>
+                  <Text style={styles.nutritionLabel}>protein</Text>
+                </View>
+                <View style={styles.nutritionItem}>
+                  <Text style={styles.nutritionValue}>{meal.carbs}</Text>
+                  <Text style={styles.nutritionLabel}>carbs</Text>
+                </View>
+                <View style={styles.nutritionItem}>
+                  <Text style={styles.nutritionValue}>{meal.fats}</Text>
+                  <Text style={styles.nutritionLabel}>fats</Text>
+                </View>
               </View>
-              <View style={styles.nutritionItem}>
-                <Text style={styles.nutritionValue}>{meal.protein}</Text>
-                <Text style={styles.nutritionLabel}>protein</Text>
-              </View>
-              <View style={styles.nutritionItem}>
-                <Text style={styles.nutritionValue}>{meal.carbs}</Text>
-                <Text style={styles.nutritionLabel}>carbs</Text>
-              </View>
-              <View style={styles.nutritionItem}>
-                <Text style={styles.nutritionValue}>{meal.fats}</Text>
-                <Text style={styles.nutritionLabel}>fats</Text>
-              </View>
+
+              <Text style={styles.metaText}>
+                {meal.prepTime} • {meal.difficulty} • {meal.cuisine}
+              </Text>
             </View>
+          </TouchableOpacity>
 
-            <Text style={styles.metaText}>
-              {meal.prepTime} • {meal.difficulty} • {meal.cuisine}
+          <View style={styles.exploreCard}>
+            <Text style={styles.exploreTitle}>Want more ideas?</Text>
+            <Text style={styles.exploreText}>
+              Keep today&apos;s pick intact and browse a swipeable gallery of more matching meals.
             </Text>
+            <TouchableOpacity
+              style={styles.exploreButton}
+              onPress={() => navigation.navigate('Explore')}
+              accessibilityRole="button"
+              accessibilityLabel="Explore more meal ideas"
+            >
+              <Text style={styles.exploreButtonText}>Explore More Meals</Text>
+            </TouchableOpacity>
           </View>
-        </TouchableOpacity>
+        </>
       ) : (
         <View style={styles.emptyCard}>
           <Text style={styles.emptyTitle}>No matching meal for today</Text>
@@ -191,13 +208,32 @@ const styles = StyleSheet.create({
     padding: SPACING.xl,
     ...SHADOWS.card,
   },
+  exploreCard: {
+    backgroundColor: COLORS.surface,
+    borderRadius: RADII.xl,
+    marginHorizontal: SPACING.lg,
+    marginBottom: SPACING.lg,
+    padding: SPACING.xl,
+    ...SHADOWS.card,
+  },
   emptyTitle: {
     fontSize: 20,
     fontWeight: 'bold',
     color: COLORS.textPrimary,
     marginBottom: SPACING.sm,
   },
+  exploreTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: COLORS.textPrimary,
+    marginBottom: SPACING.sm,
+  },
   emptyText: {
+    color: COLORS.textMuted,
+    fontSize: 15,
+    lineHeight: 22,
+  },
+  exploreText: {
     color: COLORS.textMuted,
     fontSize: 15,
     lineHeight: 22,
@@ -210,6 +246,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   emptyButtonText: {
+    color: COLORS.primaryContrast,
+    fontWeight: 'bold',
+    fontSize: 15,
+  },
+  exploreButton: {
+    marginTop: SPACING.lg,
+    backgroundColor: COLORS.primary,
+    borderRadius: RADII.md,
+    paddingVertical: 12,
+    alignItems: 'center',
+  },
+  exploreButtonText: {
     color: COLORS.primaryContrast,
     fontWeight: 'bold',
     fontSize: 15,
