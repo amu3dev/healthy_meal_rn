@@ -82,9 +82,12 @@ This project is now beyond the original tutorial-style prototype stage. It curre
 │   └── meals.js
 ├── docs/
 │   └── screenshots/
+│       ├── explore-1.png
+│       ├── explore-2.png
 │       ├── home.png
-│       ├── instructions.png
+│       ├── instruc-ingred.png
 │       ├── no-match.png
+│       ├── preferences-on.png
 │       ├── preferences.png
 │       └── recipe-detail.png
 ├── hooks/
@@ -172,8 +175,18 @@ Use these quick checks to verify the main product logic:
       <img src="docs/screenshots/home.png" alt="Home screen" width="280" />
     </td>
     <td align="center">
+      <strong>Explore Gallery</strong><br />
+      <img src="docs/screenshots/explore-1.png" alt="Explore gallery screen" width="280" />
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <strong>Shuffle Mix</strong><br />
+      <img src="docs/screenshots/shuffle-mix.png" alt="Explore shuffle mix screen" width="280" />
+    </td>
+    <td align="center">
       <strong>Preferences</strong><br />
-      <img src="docs/screenshots/preferences.png" alt="Preferences screen" width="280" />
+      <img src="docs/screenshots/preferences-on.png" alt="Preferences screen with filters enabled" width="280" />
     </td>
   </tr>
   <tr>
@@ -182,8 +195,8 @@ Use these quick checks to verify the main product logic:
       <img src="docs/screenshots/recipe-detail.png" alt="Recipe detail screen" width="280" />
     </td>
     <td align="center">
-      <strong>Instructions</strong><br />
-      <img src="docs/screenshots/instructions.png" alt="Instructions screen" width="280" />
+      <strong>Recipe Instructions</strong><br />
+      <img src="docs/screenshots/instruc-ingred.png" alt="Recipe instructions screen" width="280" />
     </td>
   </tr>
   <tr>
