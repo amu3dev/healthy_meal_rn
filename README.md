@@ -213,9 +213,7 @@ Use these quick checks to verify the main product logic:
       <strong>Recipe Instructions</strong><br />
       <img src="docs/screenshots/instruc-ingred.png" alt="Recipe instructions screen" width="280" />
     </td>
-  </tr>
-  <tr>
-    <td align="center" colspan="3">
+    <td align="center">
       <strong>No Match State</strong><br />
       <img src="docs/screenshots/no-match.png" alt="No match state" width="280" />
     </td>
