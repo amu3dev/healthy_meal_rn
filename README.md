@@ -19,7 +19,12 @@ This project is now beyond the original tutorial-style prototype stage. It curre
 
 ## Demo
 
-![Healthy Meal RN Demo](docs/screenshots/demo.gif)
+<p align="center">
+  <img src="docs/screenshots/demo.gif" alt="Healthy Meal RN demo" width="360" />
+</p>
+<p align="center">
+  <em>Quick preview of the daily meal flow, preferences update, Explore gallery, and recipe detail experience.</em>
+</p>
 
 ## Why This Project Stands Out
 
