@@ -6,6 +6,7 @@ import { COLORS } from './lib/theme';
 
 // Screens
 import HomeScreen from './screens/HomeScreen';
+import ExploreScreen from './screens/ExploreScreen';
 import RecipeDetailScreen from './screens/RecipeDetailScreen';
 import PreferencesScreen from './screens/PreferencesScreen';
 
@@ -39,6 +40,13 @@ export default function App() {
           component={RecipeDetailScreen}
           options={{
             title: 'Recipe Details'
+          }}
+        />
+        <Stack.Screen
+          name="Explore"
+          component={ExploreScreen}
+          options={{
+            title: 'Explore Meals'
           }}
         />
         <Stack.Screen 
