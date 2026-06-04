@@ -31,6 +31,7 @@ export default function MealCard({
       <MealImage
         uri={meal.image}
         label={meal.name}
+        isDecorative
         style={[styles.mealImage, imageStyle]}
       />
       <View style={[styles.content, contentStyle]}>
