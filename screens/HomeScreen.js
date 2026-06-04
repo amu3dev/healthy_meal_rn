@@ -2,7 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { MaterialIcons } from '@expo/vector-icons';
-import MealImage from '../components/MealImage';
+import MealCard from '../components/MealCard';
 import { getDailyMeal, getPreferenceSummary } from '../lib/mealUtils';
 import {
   getEnabledPreferences,
@@ -87,44 +87,17 @@ export default function HomeScreen({ navigation }) {
 
       {meal ? (
         <>
-          <TouchableOpacity
-            style={styles.card}
+          <MealCard
+            meal={meal}
+            cardStyle={styles.card}
+            imageStyle={styles.mealImage}
+            contentStyle={styles.mealInfo}
+            titleStyle={styles.mealName}
+            metaStyle={styles.metaText}
+            nutritionRowStyle={styles.nutritionContainer}
             onPress={() => navigation.navigate('RecipeDetail', { mealId: meal.id })}
-            accessibilityRole="button"
             accessibilityLabel={`Open recipe details for ${meal.name}`}
-          >
-            <MealImage
-              uri={meal.image}
-              label={meal.name}
-              style={styles.mealImage}
-            />
-            <View style={styles.mealInfo}>
-              <Text style={styles.mealName}>{meal.name}</Text>
-
-              <View style={styles.nutritionContainer}>
-                <View style={styles.nutritionItem}>
-                  <Text style={styles.nutritionValue}>{meal.calories}</Text>
-                  <Text style={styles.nutritionLabel}>calories</Text>
-                </View>
-                <View style={styles.nutritionItem}>
-                  <Text style={styles.nutritionValue}>{meal.protein}</Text>
-                  <Text style={styles.nutritionLabel}>protein</Text>
-                </View>
-                <View style={styles.nutritionItem}>
-                  <Text style={styles.nutritionValue}>{meal.carbs}</Text>
-                  <Text style={styles.nutritionLabel}>carbs</Text>
-                </View>
-                <View style={styles.nutritionItem}>
-                  <Text style={styles.nutritionValue}>{meal.fats}</Text>
-                  <Text style={styles.nutritionLabel}>fats</Text>
-                </View>
-              </View>
-
-              <Text style={styles.metaText}>
-                {meal.prepTime} • {meal.difficulty} • {meal.cuisine}
-              </Text>
-            </View>
-          </TouchableOpacity>
+          />
 
           <View style={styles.exploreCard}>
             <Text style={styles.exploreTitle}>Want more ideas?</Text>
@@ -196,10 +169,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   card: {
-    backgroundColor: COLORS.surface,
-    borderRadius: RADII.xl,
     margin: SPACING.lg,
-    ...SHADOWS.prominent,
   },
   emptyCard: {
     backgroundColor: COLORS.surface,
@@ -263,42 +233,19 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   mealImage: {
-    width: '100%',
     height: 200,
-    borderTopLeftRadius: RADII.xl,
-    borderTopRightRadius: RADII.xl,
   },
   mealInfo: {
     padding: SPACING.lg,
   },
   mealName: {
-    fontSize: 24,
-    fontWeight: 'bold',
     marginBottom: SPACING.lg,
-    color: COLORS.textPrimary,
   },
   nutritionContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
     marginTop: 8,
-  },
-  nutritionItem: {
-    alignItems: 'center',
-  },
-  nutritionValue: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: COLORS.primary,
-  },
-  nutritionLabel: {
-    fontSize: 12,
-    color: COLORS.textMuted,
-    marginTop: SPACING.xs,
   },
   metaText: {
     marginTop: SPACING.lg,
-    color: COLORS.textMuted,
-    fontSize: 14,
   },
   tip: {
     textAlign: 'center',
