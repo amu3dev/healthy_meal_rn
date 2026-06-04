@@ -123,6 +123,8 @@ This project is now beyond the original tutorial-style prototype stage. It curre
   Documents the `Meal` and `Preferences` shapes with lightweight JSDoc typedefs.
 - `hooks/usePreferences.js`
   Centralizes AsyncStorage-backed preference load/save/toggle behavior.
+- `components/MealCard.js`
+  Reuses the shared tappable meal summary layout between Home and Explore.
 - `components/MealImage.js`
   Wraps remote meal imagery with caching, loading feedback, and fallback UI.
 
@@ -133,6 +135,7 @@ This project is now beyond the original tutorial-style prototype stage. It curre
 ├── App.js
 ├── app.json
 ├── components/
+│   ├── MealCard.js
 │   └── MealImage.js
 ├── data/
 │   └── meals.js
