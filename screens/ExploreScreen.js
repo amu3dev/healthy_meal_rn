@@ -8,7 +8,7 @@ import {
   View,
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
-import MealImage from '../components/MealImage';
+import MealCard from '../components/MealCard';
 import { getMatchingMeals, getPreferenceSummary } from '../lib/mealUtils';
 import { getEnabledPreferences, mergePreferences } from '../lib/preferences';
 import { COLORS, RADII, SHADOWS, SPACING } from '../lib/theme';
@@ -185,43 +185,17 @@ export default function ExploreScreen({ navigation }) {
             ItemSeparatorComponent={() => <View style={styles.cardGap} />}
             onMomentumScrollEnd={handleMomentumScrollEnd}
             renderItem={({ item }) => (
-              <TouchableOpacity
-                style={styles.card}
+              <MealCard
+                meal={item}
+                cardStyle={styles.card}
+                imageStyle={styles.mealImage}
+                contentStyle={styles.cardContent}
+                metaStyle={styles.metaText}
+                nutritionRowStyle={styles.nutritionRow}
+                metaPlacement="beforeNutrition"
                 onPress={() => navigation.navigate('RecipeDetail', { mealId: item.id })}
-                accessibilityRole="button"
                 accessibilityLabel={`Open recipe details for ${item.name}`}
-              >
-                <MealImage
-                  uri={item.image}
-                  label={item.name}
-                  style={styles.mealImage}
-                />
-                <View style={styles.cardContent}>
-                  <Text style={styles.mealName}>{item.name}</Text>
-                  <Text style={styles.metaText}>
-                    {item.prepTime} • {item.difficulty} • {item.cuisine}
-                  </Text>
-
-                  <View style={styles.nutritionRow}>
-                    <View style={styles.nutritionItem}>
-                      <Text style={styles.nutritionValue}>{item.calories}</Text>
-                      <Text style={styles.nutritionLabel}>calories</Text>
-                    </View>
-                    <View style={styles.nutritionItem}>
-                      <Text style={styles.nutritionValue}>{item.protein}</Text>
-                      <Text style={styles.nutritionLabel}>protein</Text>
-                    </View>
-                    <View style={styles.nutritionItem}>
-                      <Text style={styles.nutritionValue}>{item.carbs}</Text>
-                      <Text style={styles.nutritionLabel}>carbs</Text>
-                    </View>
-                    <View style={styles.nutritionItem}>
-                      <Text style={styles.nutritionValue}>{item.fats}</Text>
-                      <Text style={styles.nutritionLabel}>fats</Text>
-                    </View>
-                  </View>
-                </View>
-              </TouchableOpacity>
+              />
             )}
           />
 
@@ -330,46 +304,18 @@ const styles = StyleSheet.create({
   card: {
     width: CARD_WIDTH,
     alignSelf: 'flex-start',
-    backgroundColor: COLORS.surface,
-    borderRadius: RADII.xl,
-    ...SHADOWS.prominent,
   },
   mealImage: {
-    width: '100%',
     height: 220,
-    borderTopLeftRadius: RADII.xl,
-    borderTopRightRadius: RADII.xl,
   },
   cardContent: {
     padding: SPACING.lg,
   },
-  mealName: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: COLORS.textPrimary,
-  },
   metaText: {
     marginTop: SPACING.sm,
-    fontSize: 14,
-    color: COLORS.textMuted,
   },
   nutritionRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
     marginTop: SPACING.lg,
-  },
-  nutritionItem: {
-    alignItems: 'center',
-  },
-  nutritionValue: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: COLORS.primary,
-  },
-  nutritionLabel: {
-    marginTop: SPACING.xs,
-    fontSize: 12,
-    color: COLORS.textMuted,
   },
   controlsSection: {
     paddingHorizontal: SPACING.lg,
