@@ -8,6 +8,7 @@ export default function MealImage({
   label,
   style,
   contentFit = 'cover',
+  isDecorative = false,
 }) {
   const [isLoading, setIsLoading] = useState(Boolean(uri));
   const [hasError, setHasError] = useState(!uri);
@@ -20,7 +21,11 @@ export default function MealImage({
 
   if (hasError) {
     return (
-      <View style={[styles.container, styles.fallbackContainer, style]}>
+      <View
+        style={[styles.container, styles.fallbackContainer, style]}
+        accessible={!isDecorative}
+        importantForAccessibility={isDecorative ? 'no-hide-descendants' : 'auto'}
+      >
         <Text style={styles.fallbackTitle} numberOfLines={2}>
           {fallbackLabel}
         </Text>
@@ -30,14 +35,19 @@ export default function MealImage({
   }
 
   return (
-    <View style={[styles.container, style]}>
+    <View
+      style={[styles.container, style]}
+      accessible={!isDecorative}
+      importantForAccessibility={isDecorative ? 'no-hide-descendants' : 'auto'}
+    >
       <ExpoImage
         source={{ uri }}
         style={StyleSheet.absoluteFill}
         contentFit={contentFit}
         cachePolicy="memory-disk"
         transition={180}
-        accessibilityLabel={fallbackLabel}
+        accessible={!isDecorative}
+        accessibilityLabel={isDecorative ? undefined : fallbackLabel}
         onLoadStart={() => {
           setIsLoading(true);
           setHasError(false);
