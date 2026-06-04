@@ -10,7 +10,7 @@ import {
 import { useFocusEffect } from '@react-navigation/native';
 import MealImage from '../components/MealImage';
 import { getMatchingMeals, getPreferenceSummary } from '../lib/mealUtils';
-import { getEnabledPreferences } from '../lib/preferences';
+import { getEnabledPreferences, mergePreferences } from '../lib/preferences';
 import { COLORS, RADII, SHADOWS, SPACING } from '../lib/theme';
 import usePreferences from '../hooks/usePreferences';
 
@@ -34,13 +34,14 @@ function shuffleMeals(meals) {
 
 export default function ExploreScreen({ navigation }) {
   const flatListRef = useRef(null);
+  const hasLoadedRef = useRef(false);
+  const preferencesKeyRef = useRef('');
   const [meals, setMeals] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [statusMessage, setStatusMessage] = useState('Showing all meals');
   const { loadPreferences } = usePreferences({ loadOnMount: false });
 
-  const currentMeal = meals[activeIndex] || null;
   const hasMeals = meals.length > 0;
 
   const scrollToIndex = useCallback((nextIndex) => {
@@ -54,6 +55,16 @@ export default function ExploreScreen({ navigation }) {
   const loadExploreMeals = useCallback(async () => {
     try {
       const parsedPreferences = await loadPreferences();
+      const nextPreferencesKey = JSON.stringify(mergePreferences(parsedPreferences));
+      const shouldReloadMeals =
+        !hasLoadedRef.current || preferencesKeyRef.current !== nextPreferencesKey;
+
+      preferencesKeyRef.current = nextPreferencesKey;
+
+      if (!shouldReloadMeals) {
+        return;
+      }
+
       const matchingMeals = getMatchingMeals(parsedPreferences);
       const randomizedMeals = shuffleMeals(matchingMeals);
       const enabledPreferences = getEnabledPreferences(parsedPreferences);
@@ -71,11 +82,13 @@ export default function ExploreScreen({ navigation }) {
       requestAnimationFrame(() => {
         flatListRef.current?.scrollToOffset({ animated: false, offset: 0 });
       });
+      hasLoadedRef.current = true;
     } catch (error) {
       console.error('Error loading explore meals:', error);
       setMeals([]);
       setActiveIndex(0);
       setStatusMessage('Unable to load meal ideas right now');
+      hasLoadedRef.current = false;
     } finally {
       setIsLoading(false);
     }
@@ -83,7 +96,9 @@ export default function ExploreScreen({ navigation }) {
 
   useFocusEffect(
     useCallback(() => {
-      setIsLoading(true);
+      if (!hasLoadedRef.current) {
+        setIsLoading(true);
+      }
       loadExploreMeals();
     }, [loadExploreMeals])
   );
