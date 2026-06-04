@@ -37,6 +37,18 @@ describe('MealImage', () => {
     expect(screen.getByText('Image unavailable')).toBeTruthy();
   });
 
+  it('can hide image accessibility when used decoratively inside a larger control', () => {
+    const { queryByLabelText } = render(
+      <MealImage
+        uri="https://example.com/decorative.jpg"
+        label="Decorative Meal"
+        isDecorative
+      />
+    );
+
+    expect(queryByLabelText('Decorative Meal')).toBeNull();
+  });
+
   it('resets the fallback state when the uri changes', () => {
     const { getByLabelText, rerender, queryByText, UNSAFE_getByType } = render(
       <MealImage uri="https://example.com/old.jpg" label="Retry Meal" />
