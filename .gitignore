@@ -35,10 +35,13 @@ yarn-error.*
 # local env files
 .env*.local
 
+# test coverage
+coverage/
+*.lcov
+
 # typescript
 *.tsbuildinfo
-round_table_review.md
-round_table_review_v2.md
-round_table_review_v3.md
-round_table_review_v1.md
-round_table_review_v4.md
+
+# review notes
+round_table_review*.md
+
