@@ -9,7 +9,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "test": "jest --runInBand",
-    "check:syntax": "node --check App.js && node --check index.js && node --check components/MealCard.js && node --check components/MealImage.js && node --check data/meals.js && node --check hooks/usePreferences.js && node --check lib/mealUtils.js && node --check lib/preferences.js && node --check lib/theme.js && node --check lib/types.js && node --check screens/ExploreScreen.js && node --check screens/HomeScreen.js && node --check screens/PreferencesScreen.js && node --check screens/RecipeDetailScreen.js",
+    "check:syntax": "node --check App.js && node --check index.js && node --check components/MealCard.js && node --check components/MealImage.js && node --check data/meals.js && node --check hooks/usePreferences.js && node --check hooks/useFavorites.js && node --check lib/mealUtils.js && node --check lib/preferences.js && node --check lib/theme.js && node --check lib/types.js && node --check screens/ExploreScreen.js && node --check screens/HomeScreen.js && node --check screens/PreferencesScreen.js && node --check screens/RecipeDetailScreen.js",
     "check:expo": "npx expo install --check",
     "check": "npm run check:syntax && npm run check:expo && npm test"
   },

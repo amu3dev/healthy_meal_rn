@@ -3,10 +3,12 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-nati
 import MealImage from '../components/MealImage';
 import { getMealById } from '../lib/mealUtils';
 import { COLORS, RADII, SHADOWS, SPACING } from '../lib/theme';
+import useFavorites from '../hooks/useFavorites';
 
 export default function RecipeDetailScreen({ navigation, route }) {
   const mealId = route && route.params ? route.params.mealId : null;
   const meal = getMealById(mealId);
+  const { isFavorite, isLoading, toggleFavorite } = useFavorites(meal ? meal.id : null);
 
   if (!meal) {
     return (
@@ -27,6 +29,10 @@ export default function RecipeDetailScreen({ navigation, route }) {
     );
   }
 
+  const favoriteLabel = isFavorite
+    ? `Remove ${meal.name} from favorites`
+    : `Add ${meal.name} to favorites`;
+
   return (
     <ScrollView style={styles.container}>
       <MealImage
@@ -36,7 +42,21 @@ export default function RecipeDetailScreen({ navigation, route }) {
       />
 
       <View style={styles.content}>
-        <Text style={styles.title}>{meal.name}</Text>
+        <View style={styles.titleRow}>
+          <Text style={styles.title}>{meal.name}</Text>
+          <TouchableOpacity
+            style={[styles.favoriteButton, isFavorite && styles.favoriteButtonActive]}
+            onPress={toggleFavorite}
+            disabled={isLoading}
+            accessibilityRole="button"
+            accessibilityLabel={favoriteLabel}
+            accessibilityState={{ disabled: isLoading, pressed: isFavorite }}
+          >
+            <Text style={[styles.favoriteIcon, isFavorite && styles.favoriteIconActive]}>
+              {isFavorite ? '♥' : '♡'}
+            </Text>
+          </TouchableOpacity>
+        </View>
 
         <View style={styles.nutritionCard}>
           <View style={styles.nutritionRow}>
@@ -152,6 +172,32 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: COLORS.textPrimary,
     marginBottom: SPACING.lg,
+    flex: 1,
+  },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
+  favoriteButton: {
+    borderWidth: 1,
+    borderColor: COLORS.primary,
+    borderRadius: 24,
+    width: 48,
+    height: 48,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: SPACING.md,
+  },
+  favoriteButtonActive: {
+    backgroundColor: COLORS.primary,
+  },
+  favoriteIcon: {
+    color: COLORS.primary,
+    fontSize: 28,
+    lineHeight: 32,
+  },
+  favoriteIconActive: {
+    color: COLORS.primaryContrast,
   },
   nutritionCard: {
     backgroundColor: COLORS.surface,
