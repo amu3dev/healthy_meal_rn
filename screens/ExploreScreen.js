@@ -10,7 +10,11 @@ import {
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import MealCard from '../components/MealCard';
-import { getMatchingMeals, getPreferenceSummary } from '../lib/mealUtils';
+import {
+  getMatchingMeals,
+  getPreferenceSummary,
+  HIGH_PROTEIN_THRESHOLD,
+} from '../lib/mealUtils';
 import { getEnabledPreferences, mergePreferences } from '../lib/preferences';
 import { COLORS, RADII, SHADOWS, SPACING } from '../lib/theme';
 import usePreferences from '../hooks/usePreferences';
@@ -175,6 +179,7 @@ export default function ExploreScreen({ navigation }) {
             onValueChange={setHighProteinOnly}
             accessibilityRole="switch"
             accessibilityLabel="High Protein Only filter"
+            accessibilityHint={`Shows meals with at least ${HIGH_PROTEIN_THRESHOLD}g of protein when enabled`}
           />
         </View>
         <Text style={styles.helperText}>

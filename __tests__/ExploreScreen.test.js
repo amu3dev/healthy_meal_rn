@@ -4,7 +4,11 @@ import { act, fireEvent, render, screen, waitFor } from '@testing-library/react-
 import { useFocusEffect } from '@react-navigation/native';
 import ExploreScreen from '../screens/ExploreScreen';
 import usePreferences from '../hooks/usePreferences';
-import { getMatchingMeals, getPreferenceSummary } from '../lib/mealUtils';
+import {
+  getMatchingMeals,
+  getPreferenceSummary,
+  HIGH_PROTEIN_THRESHOLD,
+} from '../lib/mealUtils';
 import { SPACING } from '../lib/theme';
 
 jest.mock('@react-navigation/native', () => ({
@@ -15,6 +19,7 @@ jest.mock('../hooks/usePreferences');
 jest.mock('../lib/mealUtils', () => ({
   getMatchingMeals: jest.fn(),
   getPreferenceSummary: jest.fn(),
+  HIGH_PROTEIN_THRESHOLD: jest.requireActual('../lib/mealUtils').HIGH_PROTEIN_THRESHOLD,
   isHighProteinMeal: jest.requireActual('../lib/mealUtils').isHighProteinMeal,
 }));
 
@@ -187,6 +192,23 @@ describe('ExploreScreen', () => {
     await waitFor(() => {
       expect(getMatchingMeals).toHaveBeenLastCalledWith({ vegan: true, highProteinOnly: false });
     });
+  });
+
+  it('describes the high-protein threshold in the filter accessibility hint', async () => {
+    usePreferences.mockReturnValue({
+      loadPreferences: jest.fn().mockResolvedValue({}),
+    });
+    getMatchingMeals.mockReturnValue([createMeal(2, 'Grilled Salmon with Roasted Vegetables')]);
+
+    render(<ExploreScreen navigation={mockNavigation} />);
+
+    await waitFor(() => {
+      expect(screen.getByLabelText('High Protein Only filter')).toBeTruthy();
+    });
+
+    expect(screen.getByLabelText('High Protein Only filter').props.accessibilityHint).toBe(
+      `Shows meals with at least ${HIGH_PROTEIN_THRESHOLD}g of protein when enabled`
+    );
   });
 
   it('keeps the current position and meal order when refocused with unchanged preferences', async () => {
