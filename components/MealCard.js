@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import MealImage from './MealImage';
 import { COLORS, RADII, SHADOWS, SPACING } from '../lib/theme';
+import { isHighProteinMeal } from '../lib/mealUtils';
 
 export default function MealCard({
   meal,
@@ -35,7 +36,18 @@ export default function MealCard({
         style={[styles.mealImage, imageStyle]}
       />
       <View style={[styles.content, contentStyle]}>
-        <Text style={[styles.mealName, titleStyle]}>{meal.name}</Text>
+        <View style={styles.titleRow}>
+          <Text style={[styles.mealName, titleStyle]}>{meal.name}</Text>
+          {isHighProteinMeal(meal) ? (
+            <Text
+              style={styles.badge}
+              accessibilityLabel="High Protein"
+              accessibilityHint="Indicates a meal with at least 20g protein"
+            >
+              High Protein
+            </Text>
+          ) : null}
+        </View>
 
         {metaPlacement === 'beforeNutrition' ? metaBlock : null}
 
@@ -83,6 +95,19 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     color: COLORS.textPrimary,
+  },
+  titleRow: {
+    gap: SPACING.sm,
+  },
+  badge: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: SPACING.sm,
+    paddingVertical: SPACING.xs,
+    borderRadius: RADII.sm,
+    backgroundColor: COLORS.imageFallbackBackground,
+    color: COLORS.imageFallbackTitle,
+    fontSize: 12,
+    fontWeight: 'bold',
   },
   metaText: {
     marginTop: SPACING.lg,

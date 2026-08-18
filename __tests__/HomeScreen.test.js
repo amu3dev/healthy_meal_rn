@@ -17,6 +17,7 @@ jest.mock('../hooks/usePreferences');
 jest.mock('../lib/mealUtils', () => ({
   getDailyMeal: jest.fn(),
   getPreferenceSummary: jest.fn(),
+  isHighProteinMeal: jest.requireActual('../lib/mealUtils').isHighProteinMeal,
 }));
 
 const mockNavigation = {
