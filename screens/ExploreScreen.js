@@ -3,6 +3,7 @@ import {
   Dimensions,
   FlatList,
   StyleSheet,
+  Switch,
   Text,
   TouchableOpacity,
   View,
@@ -40,6 +41,7 @@ export default function ExploreScreen({ navigation }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [statusMessage, setStatusMessage] = useState('Showing all meals');
+  const [highProteinOnly, setHighProteinOnly] = useState(false);
   const { loadPreferences } = usePreferences({ loadOnMount: false });
 
   const hasMeals = meals.length > 0;
@@ -55,7 +57,10 @@ export default function ExploreScreen({ navigation }) {
   const loadExploreMeals = useCallback(async () => {
     try {
       const parsedPreferences = await loadPreferences();
-      const nextPreferencesKey = JSON.stringify(mergePreferences(parsedPreferences));
+      const nextPreferencesKey = JSON.stringify({
+        ...mergePreferences(parsedPreferences),
+        highProteinOnly,
+      });
       const shouldReloadMeals =
         !hasLoadedRef.current || preferencesKeyRef.current !== nextPreferencesKey;
 
@@ -65,7 +70,7 @@ export default function ExploreScreen({ navigation }) {
         return;
       }
 
-      const matchingMeals = getMatchingMeals(parsedPreferences);
+      const matchingMeals = getMatchingMeals({ ...parsedPreferences, highProteinOnly });
       const randomizedMeals = shuffleMeals(matchingMeals);
       const enabledPreferences = getEnabledPreferences(parsedPreferences);
 
@@ -73,8 +78,8 @@ export default function ExploreScreen({ navigation }) {
       setActiveIndex(0);
       setStatusMessage(
         randomizedMeals.length > 0
-          ? getPreferenceSummary(parsedPreferences)
-          : enabledPreferences.length > 0
+          ? getPreferenceSummary({ ...parsedPreferences, highProteinOnly })
+          : enabledPreferences.length > 0 || highProteinOnly
             ? 'No meals match your current filters yet'
             : 'No meals are available right now'
       );
@@ -92,7 +97,7 @@ export default function ExploreScreen({ navigation }) {
     } finally {
       setIsLoading(false);
     }
-  }, [loadPreferences]);
+  }, [highProteinOnly, loadPreferences]);
 
   useFocusEffect(
     useCallback(() => {
@@ -163,6 +168,15 @@ export default function ExploreScreen({ navigation }) {
       <View style={styles.header}>
         <Text style={styles.title}>Explore More Meals</Text>
         <Text style={styles.summaryText}>{statusMessage}</Text>
+        <View style={styles.filterRow}>
+          <Text style={styles.filterLabel}>High Protein Only</Text>
+          <Switch
+            value={highProteinOnly}
+            onValueChange={setHighProteinOnly}
+            accessibilityRole="switch"
+            accessibilityLabel="High Protein Only filter"
+          />
+        </View>
         <Text style={styles.helperText}>
           Swipe through the gallery or use the controls below to browse fresh ideas from your filtered meal pool.
         </Text>
@@ -287,6 +301,17 @@ const styles = StyleSheet.create({
     fontSize: 15,
     lineHeight: 22,
     color: COLORS.textSecondary,
+  },
+  filterRow: {
+    marginTop: SPACING.md,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  filterLabel: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: COLORS.textPrimary,
   },
   listContent: {
     paddingHorizontal: SPACING.lg,

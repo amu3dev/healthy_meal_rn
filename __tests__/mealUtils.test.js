@@ -30,6 +30,38 @@ describe('meal utilities', () => {
     );
   });
 
+  it('filters Explore meals by the inclusive high-protein threshold', () => {
+    const meals = getMatchingMeals({ highProteinOnly: true });
+
+    expect(meals.every((meal) => Number.parseInt(meal.protein, 10) >= 20)).toBe(true);
+    expect(meals.map((meal) => meal.name)).toEqual(
+      expect.arrayContaining(['Quinoa Buddha Bowl'])
+    );
+  });
+
+  it('composes the Explore high-protein filter with existing preferences', () => {
+    const meals = getMatchingMeals({ highProteinOnly: true, vegan: true });
+
+    expect(meals.length).toBeGreaterThan(0);
+    expect(meals.every((meal) => meal.tags.vegan)).toBe(true);
+    expect(meals.every((meal) => Number.parseInt(meal.protein, 10) >= 20)).toBe(true);
+  });
+
+  it('excludes invalid protein values only when the Explore filter is enabled', () => {
+    const originalProtein = MEALS[0].protein;
+
+    try {
+      MEALS[0].protein = '20 grams';
+      expect(getMatchingMeals({ highProteinOnly: true })).not.toContain(MEALS[0]);
+
+      MEALS[0].protein = undefined;
+      expect(getMatchingMeals({ highProteinOnly: true })).not.toContain(MEALS[0]);
+      expect(getMatchingMeals()).toContain(MEALS[0]);
+    } finally {
+      MEALS[0].protein = originalProtein;
+    }
+  });
+
   it('returns no matches for impossible combinations', () => {
     expect(
       getMatchingMeals({ vegan: true, highProtein: true, lowCarb: true, glutenFree: true })

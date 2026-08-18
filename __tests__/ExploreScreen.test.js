@@ -153,6 +153,41 @@ describe('ExploreScreen', () => {
     expect(mockNavigation.navigate).toHaveBeenCalledWith('RecipeDetail', { mealId: 2 });
   });
 
+  it('toggles the Explore high-protein filter and restores the unfiltered pool', async () => {
+    const meals = [
+      createMeal(2, 'Grilled Salmon with Roasted Vegetables'),
+      createMeal(4, 'Turkey Lettuce Wraps'),
+    ];
+
+    usePreferences.mockReturnValue({
+      loadPreferences: jest.fn().mockResolvedValue({ vegan: true }),
+    });
+    getMatchingMeals.mockReturnValue(meals);
+
+    render(<ExploreScreen navigation={mockNavigation} />);
+
+    await waitFor(() => {
+      expect(screen.getByLabelText('High Protein Only filter')).toBeTruthy();
+    });
+    expect(getMatchingMeals).toHaveBeenLastCalledWith({ vegan: true, highProteinOnly: false });
+
+    await act(async () => {
+      fireEvent(screen.getByLabelText('High Protein Only filter'), 'valueChange', true);
+    });
+
+    await waitFor(() => {
+      expect(getMatchingMeals).toHaveBeenLastCalledWith({ vegan: true, highProteinOnly: true });
+    });
+
+    await act(async () => {
+      fireEvent(screen.getByLabelText('High Protein Only filter'), 'valueChange', false);
+    });
+
+    await waitFor(() => {
+      expect(getMatchingMeals).toHaveBeenLastCalledWith({ vegan: true, highProteinOnly: false });
+    });
+  });
+
   it('keeps the current position and meal order when refocused with unchanged preferences', async () => {
     const savedPreferences = {
       highProtein: true,
