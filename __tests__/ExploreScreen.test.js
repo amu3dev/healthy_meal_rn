@@ -79,7 +79,7 @@ describe('ExploreScreen', () => {
     jest.useFakeTimers();
     focusCallback = undefined;
     runFocusEffect();
-    getPreferenceSummary.mockReturnValue('Filtered by High Protein');
+    getPreferenceSummary.mockReturnValue('Filtered by High Protein Only (20g+)');
   });
 
   afterEach(async () => {
@@ -143,7 +143,7 @@ describe('ExploreScreen', () => {
       expect(screen.getByText('Explore More Meals')).toBeTruthy();
     });
 
-    expect(screen.getByText('Filtered by High Protein')).toBeTruthy();
+    expect(screen.getByText('Filtered by High Protein Only (20g+)')).toBeTruthy();
     expect(screen.getByLabelText('Shuffle meal ideas')).toBeTruthy();
     expect(screen.getByLabelText('Show next meal idea')).toBeTruthy();
 

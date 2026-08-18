@@ -4,6 +4,7 @@ import {
   getMealById,
   getMatchingMeals,
   getPreferenceSummary,
+  isHighProteinMeal,
 } from '../lib/mealUtils';
 
 describe('meal utilities', () => {
@@ -47,6 +48,21 @@ describe('meal utilities', () => {
     expect(meals.every((meal) => Number.parseInt(meal.protein, 10) >= 20)).toBe(true);
   });
 
+  it.each([
+    ['19g', false],
+    ['20g', true],
+    ['21g', true],
+  ])('classifies %s against the high-protein threshold', (protein, expected) => {
+    expect(isHighProteinMeal({ protein })).toBe(expected);
+  });
+
+  it.each(['20 grams', 'unknown', undefined, null])(
+    'fails closed for invalid protein value %s',
+    (protein) => {
+      expect(isHighProteinMeal({ protein })).toBe(false);
+    },
+  );
+
   it('excludes invalid protein values only when the Explore filter is enabled', () => {
     const originalProtein = MEALS[0].protein;
 
@@ -86,8 +102,8 @@ describe('meal utilities', () => {
   });
 
   it('describes the active preference summary', () => {
-    expect(getPreferenceSummary({ dairyFree: true, highProtein: true })).toBe(
-      'Filtered by Dairy Free, High Protein'
+    expect(getPreferenceSummary({ dairyFree: true, highProteinOnly: true })).toBe(
+      'Filtered by Dairy Free, High Protein Only (20g+)'
     );
   });
 });
