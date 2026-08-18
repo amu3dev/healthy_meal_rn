@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import MealImage from './MealImage';
 import { COLORS, RADII, SHADOWS, SPACING } from '../lib/theme';
-import { isHighProteinMeal } from '../lib/mealUtils';
+import { HIGH_PROTEIN_THRESHOLD, isHighProteinMeal } from '../lib/mealUtils';
 
 export default function MealCard({
   meal,
@@ -42,7 +42,7 @@ export default function MealCard({
             <Text
               style={styles.badge}
               accessibilityLabel="High Protein"
-              accessibilityHint="Indicates a meal with at least 20g protein"
+              accessibilityHint={`Indicates a meal with at least ${HIGH_PROTEIN_THRESHOLD}g protein`}
             >
               High Protein
             </Text>

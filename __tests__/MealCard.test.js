@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react-native';
 import MealCard from '../components/MealCard';
+import { HIGH_PROTEIN_THRESHOLD } from '../lib/mealUtils';
 
 function createMeal(protein) {
   return {
@@ -23,7 +24,7 @@ describe('MealCard', () => {
 
     expect(badge).toBeTruthy();
     expect(badge.props.accessibilityHint).toBe(
-      'Indicates a meal with at least 20g protein',
+      `Indicates a meal with at least ${HIGH_PROTEIN_THRESHOLD}g protein`,
     );
   });
 
