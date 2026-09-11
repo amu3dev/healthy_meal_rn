@@ -12,6 +12,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import MealCard from '../components/MealCard';
 import {
   getMatchingMeals,
+  getNoMatchMessage,
   getPreferenceSummary,
   HIGH_PROTEIN_THRESHOLD,
 } from '../lib/mealUtils';
@@ -44,6 +45,7 @@ export default function ExploreScreen({ navigation }) {
   const [meals, setMeals] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [statusMessage, setStatusMessage] = useState('Showing all meals');
   const [highProteinOnly, setHighProteinOnly] = useState(false);
   const { loadPreferences } = usePreferences({ loadOnMount: false });
@@ -61,6 +63,7 @@ export default function ExploreScreen({ navigation }) {
   const loadExploreMeals = useCallback(async () => {
     try {
       const parsedPreferences = await loadPreferences();
+      setLoadError(false);
       const nextPreferencesKey = JSON.stringify({
         ...mergePreferences(parsedPreferences),
         highProteinOnly,
@@ -84,8 +87,8 @@ export default function ExploreScreen({ navigation }) {
         randomizedMeals.length > 0
           ? getPreferenceSummary({ ...parsedPreferences, highProteinOnly })
           : enabledPreferences.length > 0 || highProteinOnly
-            ? 'No meals match your current filters yet'
-            : 'No meals are available right now'
+            ? getNoMatchMessage({ ...parsedPreferences, highProteinOnly })
+            : 'No meals are available right now.'
       );
 
       requestAnimationFrame(() => {
@@ -94,6 +97,7 @@ export default function ExploreScreen({ navigation }) {
       hasLoadedRef.current = true;
     } catch (error) {
       console.error('Error loading explore meals:', error);
+      setLoadError(true);
       setMeals([]);
       setActiveIndex(0);
       setStatusMessage('Unable to load meal ideas right now');
@@ -102,6 +106,11 @@ export default function ExploreScreen({ navigation }) {
       setIsLoading(false);
     }
   }, [highProteinOnly, loadPreferences]);
+
+  const handleRetry = useCallback(() => {
+    setIsLoading(true);
+    loadExploreMeals();
+  }, [loadExploreMeals]);
 
   useFocusEffect(
     useCallback(() => {
@@ -256,11 +265,28 @@ export default function ExploreScreen({ navigation }) {
             </View>
           </View>
         </>
+      ) : loadError ? (
+        <View style={styles.emptyCard}>
+          <Text style={styles.emptyTitle}>Unable to load meal ideas</Text>
+          <Text style={styles.emptyText}>
+            We could not load your saved preferences. Try again without changing them.
+          </Text>
+          <TouchableOpacity
+            style={styles.primaryButton}
+            onPress={handleRetry}
+            accessibilityRole="button"
+            accessibilityLabel="Retry loading meal ideas"
+          >
+            <Text style={styles.primaryButtonText}>Try Again</Text>
+          </TouchableOpacity>
+        </View>
       ) : (
         <View style={styles.emptyCard}>
-          <Text style={styles.emptyTitle}>No meal ideas right now</Text>
+          <Text style={styles.emptyTitle}>No meal ideas match these filters</Text>
           <Text style={styles.emptyText}>
-            Your current filters are too strict for the explore gallery. Update your preferences and try again.
+            {highProteinOnly
+              ? 'Turn off High Protein Only above, or revise a saved preference, then try again. Nothing is changed automatically.'
+              : 'Revise one saved preference, save your changes, and try again. Nothing is changed automatically.'}
           </Text>
           <TouchableOpacity
             style={styles.primaryButton}
