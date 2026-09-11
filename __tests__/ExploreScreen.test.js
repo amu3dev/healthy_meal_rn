@@ -6,6 +6,7 @@ import ExploreScreen from '../screens/ExploreScreen';
 import usePreferences from '../hooks/usePreferences';
 import {
   getMatchingMeals,
+  getNoMatchMessage,
   getPreferenceSummary,
   HIGH_PROTEIN_THRESHOLD,
 } from '../lib/mealUtils';
@@ -18,6 +19,7 @@ jest.mock('@react-navigation/native', () => ({
 jest.mock('../hooks/usePreferences');
 jest.mock('../lib/mealUtils', () => ({
   getMatchingMeals: jest.fn(),
+  getNoMatchMessage: jest.fn(),
   getPreferenceSummary: jest.fn(),
   HIGH_PROTEIN_THRESHOLD: jest.requireActual('../lib/mealUtils').HIGH_PROTEIN_THRESHOLD,
   isHighProteinMeal: jest.requireActual('../lib/mealUtils').isHighProteinMeal,
@@ -84,6 +86,9 @@ describe('ExploreScreen', () => {
     jest.useFakeTimers();
     focusCallback = undefined;
     runFocusEffect();
+    getNoMatchMessage.mockReturnValue(
+      'No meals match these selections: High Protein (20g+).'
+    );
     getPreferenceSummary.mockReturnValue('Filtered by High Protein Only (20g+)');
   });
 
@@ -101,18 +106,43 @@ describe('ExploreScreen', () => {
       }),
     });
     getMatchingMeals.mockReturnValue([]);
+    getNoMatchMessage.mockReturnValue(
+      'No meals match these selections: High Protein (20g+).'
+    );
 
     render(<ExploreScreen navigation={mockNavigation} />);
 
     await waitFor(() => {
-      expect(screen.getByText('No meal ideas right now')).toBeTruthy();
+      expect(screen.getByText('No meal ideas match these filters')).toBeTruthy();
     });
+
+    expect(screen.getByText('No meals match these selections: High Protein (20g+).')).toBeTruthy();
+    expect(screen.getByText('Revise one saved preference, save your changes, and try again. Nothing is changed automatically.')).toBeTruthy();
 
     await act(async () => {
       fireEvent.press(screen.getByLabelText('Adjust dietary preferences'));
       jest.runOnlyPendingTimers();
     });
     expect(mockNavigation.navigate).toHaveBeenCalledWith('Preferences');
+  });
+
+  it('renders a load error instead of no-match guidance when preferences fail', async () => {
+    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
+    usePreferences.mockReturnValue({
+      loadPreferences: jest.fn().mockRejectedValue(new Error('storage unavailable')),
+    });
+
+    render(<ExploreScreen navigation={mockNavigation} />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Unable to load meal ideas')).toBeTruthy();
+    });
+
+    expect(screen.queryByText('No meal ideas match these filters')).toBeNull();
+    expect(screen.queryByText(/Nothing is changed automatically/)).toBeNull();
+    expect(screen.getByLabelText('Retry loading meal ideas')).toBeTruthy();
+    expect(consoleError).toHaveBeenCalledWith('Error loading explore meals:', expect.any(Error));
+    consoleError.mockRestore();
   });
 
   it('opens recipe details from the explore gallery and exposes shuffle controls', async () => {
