@@ -56,8 +56,12 @@ describe('PreferencesScreen', () => {
 
     render(<PreferencesScreen />);
 
+    expect(screen.getByText('Dietary filters')).toBeTruthy();
+    expect(screen.getByText('Optional meal goals')).toBeTruthy();
+    expect(screen.getByText('Selected filters are applied together; each meal must carry every selected label.')).toBeTruthy();
+    expect(screen.getByText('Goals narrow the meal pool. They describe catalog labels, not medical advice.')).toBeTruthy();
     expect(screen.getByLabelText('Vegan preference')).toBeTruthy();
-    expect(screen.getByLabelText('High Protein preference')).toBeTruthy();
+    expect(screen.getByLabelText('High Protein (20g+) preference')).toBeTruthy();
 
     fireEvent.press(screen.getByLabelText('Save dietary preferences'));
 
