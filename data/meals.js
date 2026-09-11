@@ -33,7 +33,7 @@ const MEALS = [
       glutenFree: true,
       dairyFree: true,
       lowCarb: false,
-      highProtein: false,
+      highProtein: true,
     },
   },
   {
