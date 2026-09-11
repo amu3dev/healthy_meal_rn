@@ -3,6 +3,7 @@ import {
   getDailyMeal,
   getMealById,
   getMatchingMeals,
+  getNoMatchMessage,
   getPreferenceSummary,
   isHighProteinMeal,
 } from '../lib/mealUtils';
@@ -17,26 +18,30 @@ describe('meal utilities', () => {
     expect(getMealById('999')).toBeNull();
   });
 
-  it('filters meals based on enabled preferences', () => {
+  it('filters meals using the canonical high-protein rule for saved preferences', () => {
     const meals = getMatchingMeals({ highProtein: true });
 
     expect(meals.length).toBeGreaterThan(0);
-    expect(meals.every((meal) => meal.tags.highProtein)).toBe(true);
+    expect(meals.every(isHighProteinMeal)).toBe(true);
     expect(meals.map((meal) => meal.name)).toEqual(
       expect.arrayContaining([
         'Grilled Salmon with Roasted Vegetables',
         'Tempeh Lettuce Cups',
         'Baked Cod with Green Beans',
+        'Quinoa Buddha Bowl',
       ])
     );
   });
 
-  it('filters Explore meals by the inclusive high-protein threshold', () => {
-    const meals = getMatchingMeals({ highProteinOnly: true });
+  it('uses the same high-protein meal pool for saved preferences and Explore', () => {
+    const savedPreferenceMeals = getMatchingMeals({ highProtein: true });
+    const exploreMeals = getMatchingMeals({ highProteinOnly: true });
 
-    expect(meals.every((meal) => Number.parseInt(meal.protein, 10) >= 20)).toBe(true);
-    expect(meals.map((meal) => meal.name)).toEqual(
-      expect.arrayContaining(['Quinoa Buddha Bowl'])
+    expect(savedPreferenceMeals.map((meal) => meal.id)).toEqual(
+      expect.arrayContaining(exploreMeals.map((meal) => meal.id))
+    );
+    expect(exploreMeals.map((meal) => meal.id)).toEqual(
+      expect.arrayContaining(savedPreferenceMeals.map((meal) => meal.id))
     );
   });
 
@@ -78,10 +83,27 @@ describe('meal utilities', () => {
     }
   });
 
+  it('keeps the high-protein tag aligned with the canonical protein rule', () => {
+    MEALS.forEach((meal) => {
+      expect(meal.tags.highProtein).toBe(isHighProteinMeal(meal));
+    });
+  });
+
   it('returns no matches for impossible combinations', () => {
     expect(
       getMatchingMeals({ vegan: true, highProtein: true, lowCarb: true, glutenFree: true })
     ).toEqual([]);
+  });
+
+  it('returns no matches for the smallest catalog conflict', () => {
+    expect(getMatchingMeals({ vegan: true, glutenFree: true, lowCarb: true })).toEqual([]);
+  });
+
+  it('returns a recommendation after the user removes one conflicting filter', () => {
+    const date = new Date('2026-05-31T10:00:00Z');
+
+    expect(getDailyMeal({ vegan: true, glutenFree: true, lowCarb: true }, date)).toBeNull();
+    expect(getDailyMeal({ vegan: true, glutenFree: true }, date)).not.toBeNull();
   });
 
   it('returns a deterministic daily meal for the same day and preference set', () => {
@@ -104,6 +126,18 @@ describe('meal utilities', () => {
   it('describes the active preference summary', () => {
     expect(getPreferenceSummary({ dairyFree: true, highProteinOnly: true })).toBe(
       'Filtered by Dairy Free, High Protein Only (20g+)'
+    );
+  });
+
+  it('describes why selected filters have no match', () => {
+    expect(getNoMatchMessage({ vegan: true, glutenFree: true, lowCarb: true })).toBe(
+      'No meals match these selections: Vegan, Gluten Free, Low Carb.'
+    );
+  });
+
+  it('uses the Explore filter label in no-match messaging', () => {
+    expect(getNoMatchMessage({ highProteinOnly: true })).toBe(
+      'No meals match these selections: High Protein Only (20g+).'
     );
   });
 });
