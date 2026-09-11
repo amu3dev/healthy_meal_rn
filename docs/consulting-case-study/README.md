@@ -31,6 +31,8 @@ Facts observed in the repository and local verification:
 - Shared meal-card and image abstractions in [`components/MealCard.js`](../../components/MealCard.js) and [`components/MealImage.js`](../../components/MealImage.js).
 - Automated checks: syntax validation, Expo dependency compatibility, Jest tests, and a GitHub Actions workflow in [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml).
 - Local verification on the audited branch: syntax check passed, Expo dependency check reported dependencies up to date, and Jest passed **12 suites / 59 tests**.
+- Product Experiment #1 preserves the local-first flow while making no-match states explain their active selections, separating load errors from valid empty results, and aligning High Protein to a tested `20g+` rule.
+- Post-implementation verification: syntax check passed, Expo dependency check reported dependencies up to date, and Jest passed **12 suites / 68 tests**.
 - The passing Jest run still emitted a deliberate persistence-error `console.error` and a React `act(...)` warning. These are quality signals to clean up, not failed assertions.
 - Release-readiness checks are not clean: the documented web export fails because `react-dom`, `react-native-web`, and `@expo/metro-runtime` are absent; `npm audit --omit=dev` reports 54 vulnerabilities (3 low, 24 moderate, 24 high, 3 critical); and the primary `#4CAF50`/white color pair has a calculated contrast ratio of 2.78:1.
 - No usage analytics, user study, experiment result, release build, or store deployment evidence is present. This case study must not claim business or user outcomes that the repository cannot prove.
@@ -55,6 +57,7 @@ Facts observed in the repository and local verification:
 | [03 — Prioritized roadmap](./03-prioritized-roadmap.md) | Four focused improvements with hypotheses, verification, and consulting value. |
 | [04 — Case-study outline](./04-case-study-outline.md) | Website-ready narrative and evidence plan from context to next steps. |
 | [05 — AI-assisted delivery model](./05-ai-assisted-delivery-model.md) | Small Scout/Analyst → Product → Developer → Reviewer workflow with human gates. |
+| [06 — Product Experiment #1](./06-product-experiment-1-implementation-brief.md) | Bounded implementation brief and verified evidence for recoverable preference matching. |
 
 ## How this supports the consulting website
 
@@ -89,4 +92,4 @@ A public case-study page should link to this directory, the public repository, s
 
 ## Current recommendation
 
-Do not lead with a backend, an AI recommender, or a large feature expansion. First make the core decision loop explicit and trustworthy: clarify hard versus soft dietary constraints, make no-match recovery safe and understandable, unify recommendation semantics, and establish a measurable validation plan. That produces stronger consulting evidence than adding infrastructure without user evidence.
+Do not lead with a backend, an AI recommender, or a large feature expansion. Product Experiment #1 now makes the core decision loop more explicit and trustworthy; the next recommendation is to validate the no-match journey with a small human usability test before expanding scope. That produces stronger consulting evidence than adding infrastructure without user evidence.
