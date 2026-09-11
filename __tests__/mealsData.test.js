@@ -1,4 +1,5 @@
 import MEALS from '../data/meals';
+import { isHighProteinMeal } from '../lib/mealUtils';
 
 function parseMacro(value) {
   return Number.parseInt(value, 10);
@@ -45,6 +46,12 @@ describe('meal catalog data', () => {
 
       expect(parseMacro(meal.carbs)).toBeLessThanOrEqual(20);
       expect(ingredientText).not.toMatch(/potato|sweet potato|brown rice|quinoa/);
+    });
+  });
+
+  it('keeps the high-protein tag aligned with the canonical protein rule', () => {
+    MEALS.forEach((meal) => {
+      expect(meal.tags.highProtein).toBe(isHighProteinMeal(meal));
     });
   });
 
