@@ -3,7 +3,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react-nativ
 import { useFocusEffect } from '@react-navigation/native';
 import HomeScreen from '../screens/HomeScreen';
 import usePreferences from '../hooks/usePreferences';
-import { getDailyMeal, getPreferenceSummary } from '../lib/mealUtils';
+import { getDailyMeal, getNoMatchMessage, getPreferenceSummary } from '../lib/mealUtils';
 
 jest.mock('@expo/vector-icons', () => ({
   MaterialIcons: () => null,
@@ -16,6 +16,7 @@ jest.mock('@react-navigation/native', () => ({
 jest.mock('../hooks/usePreferences');
 jest.mock('../lib/mealUtils', () => ({
   getDailyMeal: jest.fn(),
+  getNoMatchMessage: jest.fn(),
   getPreferenceSummary: jest.fn(),
   isHighProteinMeal: jest.requireActual('../lib/mealUtils').isHighProteinMeal,
 }));
@@ -35,6 +36,9 @@ function runFocusEffect() {
 describe('HomeScreen', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    getNoMatchMessage.mockReturnValue(
+      'No meals match these selections: Vegan, High Protein (20g+), Low Carb.'
+    );
     getPreferenceSummary.mockReturnValue('Showing all meals');
   });
 
@@ -60,15 +64,68 @@ describe('HomeScreen', () => {
       }),
     });
     getDailyMeal.mockReturnValue(null);
+    getNoMatchMessage.mockReturnValue(
+      'No meals match these selections: Vegan, High Protein (20g+), Low Carb.'
+    );
 
     render(<HomeScreen navigation={mockNavigation} />);
 
     await waitFor(() => {
-      expect(screen.getByText('No matching meal for today')).toBeTruthy();
+      expect(screen.getByText('No meal matches all selections')).toBeTruthy();
     });
 
-    expect(screen.getByText('No meals match your current filters yet')).toBeTruthy();
+    expect(screen.getByText('No meals match these selections: Vegan, High Protein (20g+), Low Carb.')).toBeTruthy();
+    expect(screen.getByText('Turn off one selected filter or goal, save your changes, and return here to try again. Nothing is changed automatically.')).toBeTruthy();
     fireEvent.press(screen.getByLabelText('Review dietary preferences'));
+    expect(mockNavigation.navigate).toHaveBeenCalledWith('Preferences');
+  });
+
+  it('renders a load error instead of no-match guidance when preferences fail', async () => {
+    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
+    runFocusEffect();
+    usePreferences.mockReturnValue({
+      loadPreferences: jest.fn().mockRejectedValue(new Error('storage unavailable')),
+    });
+
+    render(<HomeScreen navigation={mockNavigation} />);
+
+    await waitFor(() => {
+      expect(screen.getByText("Unable to load today's meal")).toBeTruthy();
+    });
+
+    expect(screen.queryByText('No meal matches all selections')).toBeNull();
+    expect(screen.queryByText(/Nothing is changed automatically/)).toBeNull();
+    expect(screen.getByLabelText("Retry loading today's meal")).toBeTruthy();
+    expect(consoleError).toHaveBeenCalledWith('Error loading meal:', expect.any(Error));
+    consoleError.mockRestore();
+  });
+
+  it('helps an unfiltered user discover preferences', async () => {
+    runFocusEffect();
+    usePreferences.mockReturnValue({
+      loadPreferences: jest.fn().mockResolvedValue({}),
+    });
+    getDailyMeal.mockReturnValue({
+      id: 1,
+      name: 'Quinoa Buddha Bowl',
+      calories: 420,
+      protein: '20g',
+      carbs: '45g',
+      fats: '14g',
+      prepTime: '25 min',
+      difficulty: 'Easy',
+      cuisine: 'Mediterranean',
+      image: 'https://example.com/quinoa.jpg',
+    });
+
+    render(<HomeScreen navigation={mockNavigation} />);
+
+    await waitFor(() => {
+      expect(screen.getByText("Make today's pick fit you")).toBeTruthy();
+    });
+
+    expect(screen.getByText('Set dietary filters or optional meal goals to narrow your recommendation.')).toBeTruthy();
+    fireEvent.press(screen.getByLabelText('Set dietary preferences'));
     expect(mockNavigation.navigate).toHaveBeenCalledWith('Preferences');
   });
 
