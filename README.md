@@ -14,7 +14,7 @@ This project is now beyond the original tutorial-style prototype stage. It curre
 - resilient remote image rendering with loading and fallback states
 - shared theme tokens for colors, spacing, radii, and card shadows
 - accessibility labels and loading semantics for key interactive flows
-- 10 Jest test suites and 41 automated tests covering logic, data integrity, hooks, components, screen behavior, and one integration seam
+- 12 Jest test suites and 68 automated tests covering logic, data integrity, hooks, components, screen behavior, and one integration seam
 - a GitHub Actions workflow that validates the repo on every push and pull request
 
 ## Demo
@@ -189,7 +189,8 @@ Useful Expo shortcuts:
 
 - `npm run ios`
 - `npm run android`
-- `npm run web`
+
+The current repository targets native Expo development; Android bundle export is verified. Web export is not currently configured.
 
 ## Quality Checks
 
