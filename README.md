@@ -20,13 +20,18 @@ This project is now beyond the original tutorial-style prototype stage. It curre
 ## Demo
 
 <p align="center">
-  <img src="docs/screenshots/demo.gif" alt="Healthy Meal RN demo" width="360" />
+  <a href="docs/screenshots/demo.gif">
+    <img src="docs/screenshots/home.png" alt="Healthy Meal RN home screen; open for the full flow demo" width="280" />
+  </a>
 </p>
 <p align="center">
-  <em>Quick preview of the daily meal flow, preferences update, Explore gallery, and recipe detail experience.</em>
+  <em>Compact preview of the daily meal flow. <a href="docs/screenshots/demo.gif">Open the full animated demo</a>.</em>
 </p>
 
 ## Screenshots
+
+<details>
+  <summary>Open the full screen gallery</summary>
 
 <table>
   <tr>
@@ -72,6 +77,7 @@ This project is now beyond the original tutorial-style prototype stage. It curre
     </td>
   </tr>
 </table>
+</details>
 
 ## Why This Project Stands Out
 
