@@ -10,6 +10,7 @@ import {
   getPreferenceSummary,
   HIGH_PROTEIN_THRESHOLD,
 } from '../lib/mealUtils';
+import { DEFAULT_PREFERENCES } from '../lib/preferences';
 import { SPACING } from '../lib/theme';
 
 jest.mock('@react-navigation/native', () => ({
@@ -89,7 +90,7 @@ describe('ExploreScreen', () => {
     getNoMatchMessage.mockReturnValue(
       'No meals match these selections: High Protein (20g+).'
     );
-    getPreferenceSummary.mockReturnValue('Filtered by High Protein Only (20g+)');
+    getPreferenceSummary.mockReturnValue('Filtered by High Protein (20g+)');
   });
 
   afterEach(async () => {
@@ -178,7 +179,7 @@ describe('ExploreScreen', () => {
       expect(screen.getByText('Explore More Meals')).toBeTruthy();
     });
 
-    expect(screen.getByText('Filtered by High Protein Only (20g+)')).toBeTruthy();
+    expect(screen.getByText('Filtered by High Protein (20g+)')).toBeTruthy();
     expect(screen.getByLabelText('Shuffle meal ideas')).toBeTruthy();
     expect(screen.getByLabelText('Show next meal idea')).toBeTruthy();
 
@@ -189,11 +190,12 @@ describe('ExploreScreen', () => {
     expect(mockNavigation.navigate).toHaveBeenCalledWith('RecipeDetail', { mealId: 2 });
   });
 
-  it('toggles the Explore high-protein filter and restores the unfiltered pool', async () => {
+  it('toggles a session-only high-protein filter through the shared preference key', async () => {
     const meals = [
       createMeal(2, 'Grilled Salmon with Roasted Vegetables'),
       createMeal(4, 'Turkey Lettuce Wraps'),
     ];
+    const savedPreferences = { ...DEFAULT_PREFERENCES, vegan: true };
 
     usePreferences.mockReturnValue({
       loadPreferences: jest.fn().mockResolvedValue({ vegan: true }),
@@ -203,25 +205,28 @@ describe('ExploreScreen', () => {
     render(<ExploreScreen navigation={mockNavigation} />);
 
     await waitFor(() => {
-      expect(screen.getByLabelText('High Protein Only filter')).toBeTruthy();
+      expect(screen.getByLabelText('High protein filter')).toBeTruthy();
     });
-    expect(getMatchingMeals).toHaveBeenLastCalledWith({ vegan: true, highProteinOnly: false });
+    expect(getMatchingMeals).toHaveBeenLastCalledWith(savedPreferences);
+    expect(screen.getByLabelText('High protein filter').props.value).toBe(false);
 
     await act(async () => {
-      fireEvent(screen.getByLabelText('High Protein Only filter'), 'valueChange', true);
+      fireEvent(screen.getByLabelText('High protein filter'), 'valueChange', true);
     });
 
     await waitFor(() => {
-      expect(getMatchingMeals).toHaveBeenLastCalledWith({ vegan: true, highProteinOnly: true });
+      expect(getMatchingMeals).toHaveBeenLastCalledWith({ ...savedPreferences, highProtein: true });
     });
+    expect(screen.getByLabelText('High protein filter').props.value).toBe(true);
 
     await act(async () => {
-      fireEvent(screen.getByLabelText('High Protein Only filter'), 'valueChange', false);
+      fireEvent(screen.getByLabelText('High protein filter'), 'valueChange', false);
     });
 
     await waitFor(() => {
-      expect(getMatchingMeals).toHaveBeenLastCalledWith({ vegan: true, highProteinOnly: false });
+      expect(getMatchingMeals).toHaveBeenLastCalledWith(savedPreferences);
     });
+    expect(getMatchingMeals.mock.calls.every(([preferences]) => !('highProteinOnly' in preferences))).toBe(true);
   });
 
   it('describes the high-protein threshold in the filter accessibility hint', async () => {
@@ -233,12 +238,35 @@ describe('ExploreScreen', () => {
     render(<ExploreScreen navigation={mockNavigation} />);
 
     await waitFor(() => {
-      expect(screen.getByLabelText('High Protein Only filter')).toBeTruthy();
+      expect(screen.getByLabelText('High protein filter')).toBeTruthy();
     });
 
-    expect(screen.getByLabelText('High Protein Only filter').props.accessibilityHint).toBe(
+    expect(screen.getByText('High Protein (20g+)')).toBeTruthy();
+    expect(screen.getByLabelText('High protein filter').props.accessibilityHint).toBe(
       `Shows meals with at least ${HIGH_PROTEIN_THRESHOLD}g of protein when enabled`
     );
+  });
+
+  it('shows the filter as on and locked when High Protein is a saved preference', async () => {
+    usePreferences.mockReturnValue({
+      loadPreferences: jest.fn().mockResolvedValue({ highProtein: true }),
+    });
+    getMatchingMeals.mockReturnValue([createMeal(2, 'Grilled Salmon with Roasted Vegetables')]);
+
+    render(<ExploreScreen navigation={mockNavigation} />);
+
+    await waitFor(() => {
+      expect(screen.getByLabelText('High protein filter')).toBeTruthy();
+    });
+
+    const filterSwitch = screen.getByLabelText('High protein filter');
+    expect(filterSwitch.props.value).toBe(true);
+    expect(filterSwitch).toBeDisabled();
+    expect(filterSwitch.props.accessibilityHint).toBe(
+      'On because High Protein is saved in your preferences'
+    );
+    expect(screen.getByText('Saved in your preferences.')).toBeTruthy();
+    expect(getMatchingMeals).toHaveBeenLastCalledWith({ ...DEFAULT_PREFERENCES, highProtein: true });
   });
 
   it('keeps the current position and meal order when refocused with unchanged preferences', async () => {

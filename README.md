@@ -201,7 +201,7 @@ npm run check
 
 This currently verifies:
 
-- JavaScript syntax across the app source
+- ESLint (`eslint-config-expo`) across the app source, with zero warnings allowed
 - Expo dependency compatibility with the installed SDK
 - Pure logic and data validation tests for meal selection, preferences, and meal catalog integrity
 - Direct abstraction tests for `usePreferences` and `MealImage`

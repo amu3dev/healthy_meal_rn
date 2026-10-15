@@ -1,14 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { loadFavoriteIds, normalizeFavoriteIds } from '../lib/favorites';
 import { STORAGE_KEYS } from '../lib/preferences';
-
-function normalizeFavoriteIds(value) {
-  if (!Array.isArray(value)) {
-    return [];
-  }
-
-  return [...new Set(value.filter((id) => Number.isInteger(id) && id > 0))];
-}
 
 export default function useFavorites(mealId) {
   const [isFavorite, setIsFavorite] = useState(false);
@@ -23,10 +16,7 @@ export default function useFavorites(mealId) {
 
     async function loadFavorites() {
       try {
-        const savedFavorites = await AsyncStorage.getItem(STORAGE_KEYS.favoriteMeals);
-        const favoriteIds = normalizeFavoriteIds(
-          savedFavorites ? JSON.parse(savedFavorites) : []
-        );
+        const favoriteIds = await loadFavoriteIds();
         const loadedIsFavorite = favoriteIds.includes(mealId);
 
         favoriteIdsRef.current = favoriteIds;

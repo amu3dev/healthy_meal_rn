@@ -16,7 +16,11 @@ import {
   getPreferenceSummary,
   HIGH_PROTEIN_THRESHOLD,
 } from '../lib/mealUtils';
-import { getEnabledPreferences, mergePreferences } from '../lib/preferences';
+import {
+  formatPreferenceLabel,
+  getEnabledPreferences,
+  mergePreferences,
+} from '../lib/preferences';
 import { COLORS, RADII, SHADOWS, SPACING } from '../lib/theme';
 import usePreferences from '../hooks/usePreferences';
 
@@ -47,7 +51,9 @@ export default function ExploreScreen({ navigation }) {
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
   const [statusMessage, setStatusMessage] = useState('Showing all meals');
-  const [highProteinOnly, setHighProteinOnly] = useState(false);
+  // Session-only override; a saved highProtein preference always wins.
+  const [highProteinOverride, setHighProteinOverride] = useState(false);
+  const [savedHighProtein, setSavedHighProtein] = useState(false);
   const { loadPreferences } = usePreferences({ loadOnMount: false });
 
   const hasMeals = meals.length > 0;
@@ -62,12 +68,14 @@ export default function ExploreScreen({ navigation }) {
 
   const loadExploreMeals = useCallback(async () => {
     try {
-      const parsedPreferences = await loadPreferences();
+      const savedPreferences = mergePreferences(await loadPreferences());
       setLoadError(false);
-      const nextPreferencesKey = JSON.stringify({
-        ...mergePreferences(parsedPreferences),
-        highProteinOnly,
-      });
+      setSavedHighProtein(savedPreferences.highProtein);
+      const effectivePreferences = {
+        ...savedPreferences,
+        highProtein: savedPreferences.highProtein || highProteinOverride,
+      };
+      const nextPreferencesKey = JSON.stringify(effectivePreferences);
       const shouldReloadMeals =
         !hasLoadedRef.current || preferencesKeyRef.current !== nextPreferencesKey;
 
@@ -77,17 +85,17 @@ export default function ExploreScreen({ navigation }) {
         return;
       }
 
-      const matchingMeals = getMatchingMeals({ ...parsedPreferences, highProteinOnly });
+      const matchingMeals = getMatchingMeals(effectivePreferences);
       const randomizedMeals = shuffleMeals(matchingMeals);
-      const enabledPreferences = getEnabledPreferences(parsedPreferences);
+      const enabledPreferences = getEnabledPreferences(effectivePreferences);
 
       setMeals(randomizedMeals);
       setActiveIndex(0);
       setStatusMessage(
         randomizedMeals.length > 0
-          ? getPreferenceSummary({ ...parsedPreferences, highProteinOnly })
-          : enabledPreferences.length > 0 || highProteinOnly
-            ? getNoMatchMessage({ ...parsedPreferences, highProteinOnly })
+          ? getPreferenceSummary(effectivePreferences)
+          : enabledPreferences.length > 0
+            ? getNoMatchMessage(effectivePreferences)
             : 'No meals are available right now.'
       );
 
@@ -105,7 +113,7 @@ export default function ExploreScreen({ navigation }) {
     } finally {
       setIsLoading(false);
     }
-  }, [highProteinOnly, loadPreferences]);
+  }, [highProteinOverride, loadPreferences]);
 
   const handleRetry = useCallback(() => {
     setIsLoading(true);
@@ -182,15 +190,27 @@ export default function ExploreScreen({ navigation }) {
         <Text style={styles.title}>Explore More Meals</Text>
         <Text style={styles.summaryText}>{statusMessage}</Text>
         <View style={styles.filterRow}>
-          <Text style={styles.filterLabel}>High Protein Only</Text>
+          <Text style={styles.filterLabel}>{formatPreferenceLabel('highProtein')}</Text>
           <Switch
-            value={highProteinOnly}
-            onValueChange={setHighProteinOnly}
+            value={savedHighProtein || highProteinOverride}
+            onValueChange={setHighProteinOverride}
+            disabled={savedHighProtein}
             accessibilityRole="switch"
-            accessibilityLabel="High Protein Only filter"
-            accessibilityHint={`Shows meals with at least ${HIGH_PROTEIN_THRESHOLD}g of protein when enabled`}
+            accessibilityState={{
+              checked: savedHighProtein || highProteinOverride,
+              disabled: savedHighProtein,
+            }}
+            accessibilityLabel="High protein filter"
+            accessibilityHint={
+              savedHighProtein
+                ? 'On because High Protein is saved in your preferences'
+                : `Shows meals with at least ${HIGH_PROTEIN_THRESHOLD}g of protein when enabled`
+            }
           />
         </View>
+        {savedHighProtein ? (
+          <Text style={styles.filterNote}>Saved in your preferences.</Text>
+        ) : null}
         <Text style={styles.helperText}>
           Swipe through the gallery or use the controls below to browse fresh ideas from your filtered meal pool.
         </Text>
@@ -284,8 +304,8 @@ export default function ExploreScreen({ navigation }) {
         <View style={styles.emptyCard}>
           <Text style={styles.emptyTitle}>No meal ideas match these filters</Text>
           <Text style={styles.emptyText}>
-            {highProteinOnly
-              ? 'Turn off High Protein Only above, or revise a saved preference, then try again. Nothing is changed automatically.'
+            {highProteinOverride && !savedHighProtein
+              ? 'Turn off High Protein above, or revise a saved preference, then try again. Nothing is changed automatically.'
               : 'Revise one saved preference, save your changes, and try again. Nothing is changed automatically.'}
           </Text>
           <TouchableOpacity
@@ -343,6 +363,11 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '600',
     color: COLORS.textPrimary,
+  },
+  filterNote: {
+    marginTop: SPACING.xs,
+    fontSize: 13,
+    color: COLORS.textMuted,
   },
   listContent: {
     paddingHorizontal: SPACING.lg,

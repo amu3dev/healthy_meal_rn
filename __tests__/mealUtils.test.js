@@ -33,20 +33,13 @@ describe('meal utilities', () => {
     );
   });
 
-  it('uses the same high-protein meal pool for saved preferences and Explore', () => {
-    const savedPreferenceMeals = getMatchingMeals({ highProtein: true });
-    const exploreMeals = getMatchingMeals({ highProteinOnly: true });
-
-    expect(savedPreferenceMeals.map((meal) => meal.id)).toEqual(
-      expect.arrayContaining(exploreMeals.map((meal) => meal.id))
-    );
-    expect(exploreMeals.map((meal) => meal.id)).toEqual(
-      expect.arrayContaining(savedPreferenceMeals.map((meal) => meal.id))
-    );
+  it('ignores the retired highProteinOnly flag so there is a single high-protein filter', () => {
+    expect(getMatchingMeals({ highProteinOnly: true })).toEqual(getMatchingMeals());
+    expect(getPreferenceSummary({ highProteinOnly: true })).toBe('Showing all meals');
   });
 
-  it('composes the Explore high-protein filter with existing preferences', () => {
-    const meals = getMatchingMeals({ highProteinOnly: true, vegan: true });
+  it('composes the high-protein filter with other preferences', () => {
+    const meals = getMatchingMeals({ highProtein: true, vegan: true });
 
     expect(meals.length).toBeGreaterThan(0);
     expect(meals.every((meal) => meal.tags.vegan)).toBe(true);
@@ -68,15 +61,15 @@ describe('meal utilities', () => {
     },
   );
 
-  it('excludes invalid protein values only when the Explore filter is enabled', () => {
+  it('excludes invalid protein values only when the high-protein filter is enabled', () => {
     const originalProtein = MEALS[0].protein;
 
     try {
       MEALS[0].protein = '20 grams';
-      expect(getMatchingMeals({ highProteinOnly: true })).not.toContain(MEALS[0]);
+      expect(getMatchingMeals({ highProtein: true })).not.toContain(MEALS[0]);
 
       MEALS[0].protein = undefined;
-      expect(getMatchingMeals({ highProteinOnly: true })).not.toContain(MEALS[0]);
+      expect(getMatchingMeals({ highProtein: true })).not.toContain(MEALS[0]);
       expect(getMatchingMeals()).toContain(MEALS[0]);
     } finally {
       MEALS[0].protein = originalProtein;
@@ -124,8 +117,8 @@ describe('meal utilities', () => {
   });
 
   it('describes the active preference summary', () => {
-    expect(getPreferenceSummary({ dairyFree: true, highProteinOnly: true })).toBe(
-      'Filtered by Dairy Free, High Protein Only (20g+)'
+    expect(getPreferenceSummary({ dairyFree: true, highProtein: true })).toBe(
+      'Filtered by Dairy Free, High Protein (20g+)'
     );
   });
 
@@ -135,9 +128,9 @@ describe('meal utilities', () => {
     );
   });
 
-  it('uses the Explore filter label in no-match messaging', () => {
-    expect(getNoMatchMessage({ highProteinOnly: true })).toBe(
-      'No meals match these selections: High Protein Only (20g+).'
+  it('labels the high-protein filter once in no-match messaging', () => {
+    expect(getNoMatchMessage({ highProtein: true })).toBe(
+      'No meals match these selections: High Protein (20g+).'
     );
   });
 });
