@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -11,6 +11,7 @@ import { COLORS, RADII, SHADOWS, SPACING } from '../lib/theme';
 import usePreferences from '../hooks/usePreferences';
 
 export default function HomeScreen({ navigation }) {
+  const hasLoadedRef = useRef(false);
   const [meal, setMeal] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -35,12 +36,14 @@ export default function HomeScreen({ navigation }) {
             ? getNoMatchMessage(parsedPreferences)
             : 'No meals are available right now.'
       );
+      hasLoadedRef.current = true;
     } catch (error) {
       console.error('Error loading meal:', error);
       setLoadError(true);
       setMeal(null);
       setHasActivePreferences(false);
       setStatusMessage('Unable to load today\'s meal right now');
+      hasLoadedRef.current = false;
     } finally {
       setIsLoading(false);
     }
@@ -48,7 +51,11 @@ export default function HomeScreen({ navigation }) {
 
   useFocusEffect(
     useCallback(() => {
-      setIsLoading(true);
+      // Only block the screen on the first load; refocusing refreshes in place
+      // so returning from a recipe keeps the current content and scroll position.
+      if (!hasLoadedRef.current) {
+        setIsLoading(true);
+      }
       loadDailyMeal();
     }, [loadDailyMeal])
   );
@@ -84,14 +91,24 @@ export default function HomeScreen({ navigation }) {
     >
       <View style={styles.header}>
         <Text style={styles.headerText}>Today's Healthy Meal</Text>
-        <TouchableOpacity
-          style={styles.preferencesButton}
-          onPress={() => navigation.navigate('Preferences')}
-          accessibilityRole="button"
-          accessibilityLabel="Open dietary preferences"
-        >
-          <MaterialIcons name="settings" size={24} color={COLORS.primary} />
-        </TouchableOpacity>
+        <View style={styles.headerActions}>
+          <TouchableOpacity
+            style={styles.preferencesButton}
+            onPress={() => navigation.navigate('Favorites')}
+            accessibilityRole="button"
+            accessibilityLabel="Open favorite meals"
+          >
+            <MaterialIcons name="favorite-border" size={24} color={COLORS.primary} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.preferencesButton}
+            onPress={() => navigation.navigate('Preferences')}
+            accessibilityRole="button"
+            accessibilityLabel="Open dietary preferences"
+          >
+            <MaterialIcons name="settings" size={24} color={COLORS.primary} />
+          </TouchableOpacity>
+        </View>
       </View>
 
       <Text style={styles.summaryText}>{statusMessage}</Text>
@@ -202,6 +219,9 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     color: COLORS.textPrimary,
+  },
+  headerActions: {
+    flexDirection: 'row',
   },
   preferencesButton: {
     padding: SPACING.sm,

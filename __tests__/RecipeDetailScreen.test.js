@@ -39,6 +39,7 @@ describe('RecipeDetailScreen', () => {
     const favoriteButton = await screen.findByLabelText(
       'Add Grilled Salmon with Roasted Vegetables to favorites'
     );
+    await waitFor(() => expect(favoriteButton).toBeEnabled());
     await act(async () => {
       fireEvent.press(favoriteButton);
     });

@@ -1,5 +1,5 @@
 import React from 'react';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import HomeScreen from '../screens/HomeScreen';
 import usePreferences from '../hooks/usePreferences';
@@ -188,5 +188,71 @@ describe('HomeScreen', () => {
 
     fireEvent.press(screen.getByLabelText('Explore more meal ideas'));
     expect(mockNavigation.navigate).toHaveBeenCalledWith('Explore');
+  });
+
+  it('refreshes in place on refocus without replacing content with the loading screen', async () => {
+    let focusCallback;
+    useFocusEffect.mockImplementation((callback) => {
+      focusCallback = callback;
+      React.useEffect(() => {
+        callback();
+      }, [callback]);
+    });
+    let resolveRefocus;
+    const loadPreferences = jest.fn()
+      .mockResolvedValueOnce({})
+      .mockImplementationOnce(() => new Promise((resolve) => {
+        resolveRefocus = resolve;
+      }));
+    usePreferences.mockReturnValue({ loadPreferences });
+    getDailyMeal.mockReturnValue({
+      id: 4,
+      name: 'Turkey Lettuce Wraps',
+      calories: 340,
+      protein: '33g',
+      carbs: '14g',
+      fats: '16g',
+      prepTime: '20 min',
+      difficulty: 'Easy',
+      cuisine: 'Asian-Inspired',
+      image: 'https://example.com/turkey-wraps.jpg',
+    });
+
+    render(<HomeScreen navigation={mockNavigation} />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Turkey Lettuce Wraps')).toBeTruthy();
+    });
+
+    await act(async () => {
+      focusCallback();
+    });
+
+    // While the refocus load is still pending, the previous content stays visible.
+    expect(loadPreferences).toHaveBeenCalledTimes(2);
+    expect(screen.queryByText('Loading...')).toBeNull();
+    expect(screen.getByText('Turkey Lettuce Wraps')).toBeTruthy();
+
+    await act(async () => {
+      resolveRefocus({});
+    });
+    expect(screen.getByText('Turkey Lettuce Wraps')).toBeTruthy();
+  });
+
+  it('opens the favorites list from the header', async () => {
+    runFocusEffect();
+    usePreferences.mockReturnValue({
+      loadPreferences: jest.fn().mockResolvedValue({}),
+    });
+    getDailyMeal.mockReturnValue(null);
+
+    render(<HomeScreen navigation={mockNavigation} />);
+
+    await waitFor(() => {
+      expect(screen.getByLabelText('Open favorite meals')).toBeTruthy();
+    });
+
+    fireEvent.press(screen.getByLabelText('Open favorite meals'));
+    expect(mockNavigation.navigate).toHaveBeenCalledWith('Favorites');
   });
 });
