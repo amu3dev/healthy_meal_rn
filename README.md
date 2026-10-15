@@ -1,243 +1,101 @@
-# Healthy Meal RN
+# Healthy Meal
 
-Healthy Meal RN is an Expo + React Native app that suggests a deterministic healthy meal of the day, lets users save dietary preferences locally, and shows recipe details in a simple mobile-first flow.
+[![CI](https://github.com/amu3dev/healthy_meal_rn/actions/workflows/ci.yml/badge.svg)](https://github.com/amu3dev/healthy_meal_rn/actions/workflows/ci.yml)
+![Expo SDK 52](https://img.shields.io/badge/Expo_SDK-52-000020?logo=expo)
+![React Native 0.76](https://img.shields.io/badge/React_Native-0.76-61DAFB?logo=react)
+![Tests](https://img.shields.io/badge/tests-78_passing-4CAF50)
 
-## Current Status
-
-This project is now beyond the original tutorial-style prototype stage. It currently includes:
-
-- 4 production-like screens wired through React Navigation
-- a 25-meal catalog with broader dietary coverage
-- shared preference state access through a reusable hook
-- canonical meal lookup by `mealId` instead of passing full objects through navigation
-- a separate Explore gallery so users can browse more meals without breaking the daily-pick concept
-- resilient remote image rendering with loading and fallback states
-- shared theme tokens for colors, spacing, radii, and card shadows
-- accessibility labels and loading semantics for key interactive flows
-- 10 Jest test suites and 41 automated tests covering logic, data integrity, hooks, components, screen behavior, and one integration seam
-- a GitHub Actions workflow that validates the repo on every push and pull request
-
-## Demo
+A React Native app that picks one healthy meal for you each day, filtered by your dietary needs. Browse more ideas in a swipeable gallery, open full recipes, and save the ones you like. Your data stays on the device: no account and no backend.
 
 <p align="center">
-  <img src="docs/screenshots/demo.gif" alt="Healthy Meal RN demo" width="360" />
+  <img src="docs/screenshots/demo.gif" alt="Healthy Meal demo: daily pick, Explore gallery, recipe details, and favorites" width="320" />
 </p>
-<p align="center">
-  <em>Quick preview of the daily meal flow, preferences update, Explore gallery, and recipe detail experience.</em>
-</p>
+
+## Features
+
+- **A daily pick that stays put.** One meal per day, chosen from the meals that match your filters. It doesn't reshuffle when you refresh; it changes when the day or your filters change.
+- **Dietary filters and meal goals.** Vegetarian, vegan, gluten-free and dairy-free filters, plus low-carb and high-protein (20g+) goals. Selections combine, so a meal must match all of them.
+- **Explore gallery.** Swipe through every matching meal in a shuffled order, with Previous, Next and Shuffle Mix controls. A High Protein switch narrows the gallery for the current visit without changing your saved preferences.
+- **Recipe details.** Nutrition (calories, protein, carbs, fats, fiber), prep time, difficulty, cuisine, servings, ingredients and step-by-step instructions.
+- **Favorites.** Tap the heart on any recipe and find it later in your Favorites list, newest first.
+- **Handles the unhappy paths.** Clear messages when no meal matches your filters, retry buttons when saved data can't be read, and fallback cards when a photo fails to load.
+- **Accessible by default.** Screen-reader labels, hints and states on buttons, switches and loading screens.
 
 ## Screenshots
 
 <table>
   <tr>
-    <td align="center">
-      <strong>Home</strong><br />
-      <img src="docs/screenshots/home.png" alt="Home screen" width="280" />
-    </td>
-    <td align="center">
-      <strong>Preferences</strong><br />
-      <img src="docs/screenshots/preferences.png" alt="Preferences screen" width="280" />
-    </td>
-    <td align="center">
-      <strong>Preferences With Filters</strong><br />
-      <img src="docs/screenshots/preferences-on.png" alt="Preferences screen with filters enabled" width="280" />
-    </td>
+    <td align="center"><strong>Daily pick</strong><br /><img src="docs/screenshots/home.png" alt="Home screen with today's meal" width="240" /></td>
+    <td align="center"><strong>Explore</strong><br /><img src="docs/screenshots/explore.png" alt="Explore gallery" width="240" /></td>
+    <td align="center"><strong>Explore, high protein</strong><br /><img src="docs/screenshots/explore-filtered.png" alt="Explore gallery with the High Protein switch on" width="240" /></td>
   </tr>
   <tr>
-    <td align="center">
-      <strong>Explore Gallery</strong><br />
-      <img src="docs/screenshots/explore-1.png" alt="Explore gallery screen" width="280" />
-    </td>
-    <td align="center">
-      <strong>Explore Gallery Alt</strong><br />
-      <img src="docs/screenshots/explore-2.png" alt="Alternate explore gallery screen" width="280" />
-    </td>
-    <td align="center">
-      <strong>Shuffle Mix</strong><br />
-      <img src="docs/screenshots/shuffle-mix.png" alt="Explore shuffle mix screen" width="280" />
-    </td>
+    <td align="center"><strong>Recipe details</strong><br /><img src="docs/screenshots/recipe-detail.png" alt="Recipe details with nutrition and favorite button" width="240" /></td>
+    <td align="center"><strong>Ingredients and steps</strong><br /><img src="docs/screenshots/instruc-ingred.png" alt="Recipe ingredients and instructions" width="240" /></td>
+    <td align="center"><strong>Favorites</strong><br /><img src="docs/screenshots/favorites.png" alt="Favorite meals list" width="240" /></td>
   </tr>
   <tr>
-    <td align="center">
-      <strong>Recipe Detail</strong><br />
-      <img src="docs/screenshots/recipe-detail.png" alt="Recipe detail screen" width="280" />
-    </td>
-    <td align="center">
-      <strong>Recipe Instructions</strong><br />
-      <img src="docs/screenshots/instruc-ingred.png" alt="Recipe instructions screen" width="280" />
-    </td>
-    <td align="center">
-      <strong>No Match State</strong><br />
-      <img src="docs/screenshots/no-match.png" alt="No match state" width="280" />
-    </td>
+    <td align="center"><strong>Preferences</strong><br /><img src="docs/screenshots/preferences.png" alt="Preferences screen" width="240" /></td>
+    <td align="center"><strong>Preferences set</strong><br /><img src="docs/screenshots/preferences-on.png" alt="Preferences with filters enabled" width="240" /></td>
+    <td align="center"><strong>No match</strong><br /><img src="docs/screenshots/no-match.png" alt="Empty state when no meal matches the filters" width="240" /></td>
   </tr>
 </table>
 
-## Why This Project Stands Out
+## How it works
 
-- Builds a complete multi-screen mobile flow with React Navigation.
-- Persists user preferences locally with AsyncStorage through a shared `usePreferences` hook.
-- Uses deterministic daily selection instead of random reshuffling on every refresh.
-- Resolves recipe detail screens from a canonical data source using `mealId`.
-- Separates the stable daily recommendation from a swipeable Explore gallery.
-- Handles remote image failures gracefully with cached image loading and fallback UI.
-- Includes accessibility labels for key buttons, switches, and loading states.
-- Handles no-match and missing-data states instead of only the happy path.
-- Ships with a lightweight GitHub Actions workflow to validate the repo on every push and pull request.
+**Daily pick.** The app filters the catalog by your saved preferences, then hashes today's local date together with your active filters to choose one of the matching meals. The same day and filters always give the same meal, and changing either gives a new one. See `getDailyMeal` in [`lib/mealUtils.js`](lib/mealUtils.js).
 
-## Features
+**Filtering.** Each meal carries dietary tags. Selected filters and goals are combined with AND. High protein isn't a hand-set tag: it's worked out from the meal's protein value (20g or more), so the label can't drift from the nutrition data.
 
-- Daily healthy meal suggestion on the home screen
-- Swipeable Explore gallery with `Previous`, `Next`, and `Shuffle Mix` controls
-- Dietary filters for vegetarian, vegan, gluten-free, dairy-free, low-carb, and high-protein preferences
-- 25-meal catalog with broader coverage across common dietary combinations
-- Persistent preferences saved on device
-- Recipe detail screen with nutrition, ingredients, and cooking steps
-- Expanded meal metadata including prep time, difficulty, cuisine, servings, and fiber
-- Cached image loading with loading indicators and graceful fallback cards
-- Empty-state guidance when no meals match the selected preferences
-- Accessibility labels on key interactive elements and progress semantics for loading states
-- Pull-to-refresh that reloads the current daily selection logic
+**Storage.** Preferences and favorites are saved on the device with AsyncStorage and never sent anywhere. Meal photos load from Unsplash and are cached on the device.
 
-## Tech Stack
+## Getting started
 
-- Expo SDK 52
-- React Native 0.76
-- React Navigation native stack
-- AsyncStorage for local persistence
-- `expo-image` for cached remote image rendering
-- Jest + React Native Testing Library for automated tests
-- lightweight shared design tokens through `lib/theme.js`
-
-## Architecture Notes
-
-- `data/meals.js`
-  Stores the current meal catalog and metadata.
-- `lib/mealUtils.js`
-  Contains deterministic daily meal selection, filtering, summary generation, and canonical meal lookup.
-- `lib/preferences.js`
-  Contains preference defaults, normalization helpers, and formatting helpers.
-- `lib/theme.js`
-  Centralizes shared colors, spacing, radii, and shadow styles.
-- `lib/types.js`
-  Documents the `Meal` and `Preferences` shapes with lightweight JSDoc typedefs.
-- `hooks/usePreferences.js`
-  Centralizes AsyncStorage-backed preference load/save/toggle behavior.
-- `components/MealCard.js`
-  Reuses the shared tappable meal summary layout between Home and Explore.
-- `components/MealImage.js`
-  Wraps remote meal imagery with caching, loading feedback, and fallback UI.
-
-## Project Structure
-
-```text
-.
-├── App.js
-├── app.json
-├── components/
-│   ├── MealCard.js
-│   └── MealImage.js
-├── data/
-│   └── meals.js
-├── docs/
-│   └── screenshots/
-│       ├── demo.gif
-│       ├── demo.mov
-│       ├── explore-1.png
-│       ├── explore-2.png
-│       ├── home.png
-│       ├── instruc-ingred.png
-│       ├── no-match.png
-│       ├── preferences-on.png
-│       ├── preferences.png
-│       ├── recipe-detail.png
-│       └── shuffle-mix.png
-├── hooks/
-│   └── usePreferences.js
-├── lib/
-│   ├── mealUtils.js
-│   ├── preferences.js
-│   ├── theme.js
-│   └── types.js
-├── screens/
-│   ├── ExploreScreen.js
-│   ├── HomeScreen.js
-│   ├── PreferencesScreen.js
-│   └── RecipeDetailScreen.js
-├── __tests__/
-│   ├── ExploreScreen.test.js
-│   ├── HomeScreen.test.js
-│   ├── HomeScreen.integration.test.js
-│   ├── PreferencesScreen.test.js
-│   ├── RecipeDetailScreen.test.js
-│   ├── mealUtils.test.js
-│   ├── mealsData.test.js
-│   ├── MealImage.test.js
-│   ├── preferences.test.js
-│   └── usePreferences.test.js
-└── assets/
-```
-
-## Local Setup
+**Requirements:** Node.js 22 (the version CI uses) and either the [Expo Go](https://expo.dev/go) app on a phone, or an iOS Simulator or Android emulator.
 
 ```bash
 npm install
 npm start
 ```
 
-Useful Expo shortcuts:
+Then scan the QR code with Expo Go, or press `i` for the iOS Simulator or `a` for an Android emulator. Shortcuts: `npm run ios` and `npm run android`.
 
-- `npm run ios`
-- `npm run android`
-- `npm run web`
-
-## Quality Checks
-
-Run the local validation scripts:
+## Testing and quality
 
 ```bash
 npm run check
 ```
 
-This currently verifies:
+This runs the same checks as CI:
 
-- ESLint (`eslint-config-expo`) across the app source, with zero warnings allowed
-- Expo dependency compatibility with the installed SDK
-- Pure logic and data validation tests for meal selection, preferences, and meal catalog integrity
-- Direct abstraction tests for `usePreferences` and `MealImage`
-- Screen-level behavior for Explore, Home, Preferences, and Recipe Detail
-- One integration-style Home test covering `AsyncStorage -> preferences load -> daily meal render`
+- **ESLint** with `eslint-config-expo`, with zero warnings allowed (`npm run lint`).
+- **Expo dependency check:** installed packages match Expo SDK 52 (`npm run check:expo`).
+- **Jest + React Native Testing Library:** 14 suites and 78 tests (`npm test`) covering filtering and daily-pick logic, catalog data integrity, the preferences and favorites hooks, shared components, every screen, and one integration test from storage through to the rendered daily meal.
 
-You can also run tests directly with:
+GitHub Actions runs `npm run check` on every push to `master` and on every pull request ([workflow](.github/workflows/ci.yml)).
 
-```bash
-npm test
+## Project structure
+
+```text
+App.js            Navigation stack (Home, Explore, Recipe Details, Preferences, Favorites)
+screens/          One file per screen
+components/       MealCard (shared meal summary) and MealImage (cached image with fallback)
+hooks/            usePreferences and useFavorites (AsyncStorage-backed state)
+lib/              Meal selection and filtering, preferences, favorites, theme tokens, JSDoc types
+data/meals.js     The 25-meal catalog
+__tests__/        Jest test suites
+docs/             Screenshots and the product case study
 ```
 
-## Manual Test Scenarios
+## Tech stack
 
-Use these quick checks to verify the main product logic:
+Expo SDK 52 · React Native 0.76 (New Architecture) · React 18 · React Navigation 7 (native stack) · AsyncStorage · expo-image · Jest · React Native Testing Library · ESLint
 
-1. Open the app with all filters off and confirm the home screen shows a meal with `Showing all meals`.
-2. Enable `High Protein` and confirm a high-protein meal is shown.
-3. Enable `Vegan` and confirm a vegan meal is shown.
-4. Enable `Vegan` + `High Protein` + `Low Carb` + `Gluten Free` and confirm the no-match empty state appears.
-5. Return to Preferences, loosen filters, and confirm a meal appears again.
-6. Open `Explore More Meals` from Home and confirm you can swipe between matching meals.
-7. Use `Shuffle Mix` in Explore and confirm the gallery resets to a fresh order.
-8. Tap a meal card and confirm Recipe Detail opens correctly from `mealId`-based navigation.
-9. Temporarily break a meal image URL and confirm the fallback image card appears instead of a blank broken image.
+## Case study
 
-## Resume-Friendly Highlights
+This project is also a worked product case study: a technical audit, product thesis, prioritized roadmap and implementation briefs. See [`docs/consulting-case-study`](docs/consulting-case-study/README.md).
 
-- Designed and implemented a mobile meal recommendation flow using Expo and React Native.
-- Built client-side persistence and preference-aware filtering logic with reusable shared hooks.
-- Improved product reliability by adding graceful empty/error states, deterministic daily behavior, a separate Explore flow, resilient image fallbacks, and accessibility-aware UI labels.
-- Added automated testing for core logic, data integrity, hooks, components, and screen behavior.
-- Added an integration-style Home test to verify the real storage-to-selection-to-render path.
-- Added repository automation with GitHub Actions to validate dependency compatibility and source integrity.
+## Roadmap
 
-## Next Improvements
-
-- Move from JSDoc typedefs to TypeScript if the project grows further
-- Connect to a backend or CMS for dynamic meal content
+- Move from JSDoc types to TypeScript.
+- Load meals from a backend or CMS instead of a bundled file.
