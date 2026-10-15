@@ -17,8 +17,8 @@ function createMeal(protein) {
 }
 
 describe('MealCard', () => {
-  it('shows the High Protein badge at the inclusive threshold', () => {
-    render(<MealCard meal={createMeal('20g')} />);
+  it('shows the High Protein badge at the inclusive threshold', async () => {
+    await render(<MealCard meal={createMeal('20g')} />);
 
     const badge = screen.getByLabelText('High Protein');
 
@@ -28,12 +28,12 @@ describe('MealCard', () => {
     );
   });
 
-  it('does not show the High Protein badge below the threshold or for invalid amounts', () => {
-    const { rerender, queryByText } = render(<MealCard meal={createMeal('19g')} />);
+  it('does not show the High Protein badge below the threshold or for invalid amounts', async () => {
+    const { rerender, queryByText } = await render(<MealCard meal={createMeal('19g')} />);
 
     expect(queryByText('High Protein')).toBeNull();
 
-    rerender(<MealCard meal={createMeal('20 grams')} />);
+    await rerender(<MealCard meal={createMeal('20 grams')} />);
 
     expect(queryByText('High Protein')).toBeNull();
   });

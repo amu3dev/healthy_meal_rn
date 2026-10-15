@@ -15,7 +15,7 @@ describe('RecipeDetailScreen', () => {
   });
 
   it('renders recipe details from the canonical meal source', async () => {
-    render(
+    await render(
       <RecipeDetailScreen
         navigation={mockNavigation}
         route={{ params: { mealId: 2 } }}
@@ -29,7 +29,7 @@ describe('RecipeDetailScreen', () => {
   });
 
   it('toggles and restores the favorite state for a valid meal', async () => {
-    render(
+    await render(
       <RecipeDetailScreen
         navigation={mockNavigation}
         route={{ params: { mealId: 2 } }}
@@ -41,7 +41,7 @@ describe('RecipeDetailScreen', () => {
     );
     await waitFor(() => expect(favoriteButton).toBeEnabled());
     await act(async () => {
-      fireEvent.press(favoriteButton);
+      await fireEvent.press(favoriteButton);
     });
     await waitFor(() => {
       expect(screen.getByLabelText(
@@ -54,8 +54,8 @@ describe('RecipeDetailScreen', () => {
     );
   });
 
-  it('renders a fallback state when the meal id is invalid', () => {
-    render(
+  it('renders a fallback state when the meal id is invalid', async () => {
+    await render(
       <RecipeDetailScreen
         navigation={mockNavigation}
         route={{ params: { mealId: 999 } }}
@@ -66,7 +66,7 @@ describe('RecipeDetailScreen', () => {
     expect(screen.getByLabelText('Go back to the previous screen')).toBeTruthy();
     expect(screen.queryByLabelText(/favorites/)).toBeNull();
 
-    fireEvent.press(screen.getByLabelText('Go back to the previous screen'));
+    await fireEvent.press(screen.getByLabelText('Go back to the previous screen'));
     expect(mockNavigation.goBack).toHaveBeenCalled();
   });
 });

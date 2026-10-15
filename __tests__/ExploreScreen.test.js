@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dimensions, FlatList } from 'react-native';
+import { Dimensions } from 'react-native';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import ExploreScreen from '../screens/ExploreScreen';
@@ -61,14 +61,8 @@ function createDeferred() {
   return { promise, resolve, reject };
 }
 
-function getPressableAncestor(node) {
-  let currentNode = node;
-
-  while (currentNode && typeof currentNode.props?.onPress !== 'function') {
-    currentNode = currentNode.parent;
-  }
-
-  return currentNode;
+function isButtonDisabled(button) {
+  return Boolean(button.props?.disabled || button.props?.accessibilityState?.disabled);
 }
 
 function runFocusEffect() {
@@ -111,7 +105,7 @@ describe('ExploreScreen', () => {
       'No meals match these selections: High Protein (20g+).'
     );
 
-    render(<ExploreScreen navigation={mockNavigation} />);
+    await render(<ExploreScreen navigation={mockNavigation} />);
 
     await waitFor(() => {
       expect(screen.getByText('No meal ideas match these filters')).toBeTruthy();
@@ -121,7 +115,7 @@ describe('ExploreScreen', () => {
     expect(screen.getByText('Revise one saved preference, save your changes, and try again. Nothing is changed automatically.')).toBeTruthy();
 
     await act(async () => {
-      fireEvent.press(screen.getByLabelText('Adjust dietary preferences'));
+      await fireEvent.press(screen.getByLabelText('Adjust dietary preferences'));
       jest.runOnlyPendingTimers();
     });
     expect(mockNavigation.navigate).toHaveBeenCalledWith('Preferences');
@@ -133,7 +127,7 @@ describe('ExploreScreen', () => {
       loadPreferences: jest.fn().mockRejectedValue(new Error('storage unavailable')),
     });
 
-    render(<ExploreScreen navigation={mockNavigation} />);
+    await render(<ExploreScreen navigation={mockNavigation} />);
 
     await waitFor(() => {
       expect(screen.getByText('Unable to load meal ideas')).toBeTruthy();
@@ -173,7 +167,7 @@ describe('ExploreScreen', () => {
     });
     getMatchingMeals.mockReturnValue(meals);
 
-    render(<ExploreScreen navigation={mockNavigation} />);
+    await render(<ExploreScreen navigation={mockNavigation} />);
 
     await waitFor(() => {
       expect(screen.getByText('Explore More Meals')).toBeTruthy();
@@ -184,7 +178,7 @@ describe('ExploreScreen', () => {
     expect(screen.getByLabelText('Show next meal idea')).toBeTruthy();
 
     await act(async () => {
-      fireEvent.press(screen.getByLabelText('Open recipe details for Grilled Salmon with Roasted Vegetables'));
+      await fireEvent.press(screen.getByLabelText('Open recipe details for Grilled Salmon with Roasted Vegetables'));
       jest.runOnlyPendingTimers();
     });
     expect(mockNavigation.navigate).toHaveBeenCalledWith('RecipeDetail', { mealId: 2 });
@@ -202,7 +196,7 @@ describe('ExploreScreen', () => {
     });
     getMatchingMeals.mockReturnValue(meals);
 
-    render(<ExploreScreen navigation={mockNavigation} />);
+    await render(<ExploreScreen navigation={mockNavigation} />);
 
     await waitFor(() => {
       expect(screen.getByLabelText('High protein filter')).toBeTruthy();
@@ -211,7 +205,7 @@ describe('ExploreScreen', () => {
     expect(screen.getByLabelText('High protein filter').props.value).toBe(false);
 
     await act(async () => {
-      fireEvent(screen.getByLabelText('High protein filter'), 'valueChange', true);
+      await fireEvent(screen.getByLabelText('High protein filter'), 'valueChange', true);
     });
 
     await waitFor(() => {
@@ -220,7 +214,7 @@ describe('ExploreScreen', () => {
     expect(screen.getByLabelText('High protein filter').props.value).toBe(true);
 
     await act(async () => {
-      fireEvent(screen.getByLabelText('High protein filter'), 'valueChange', false);
+      await fireEvent(screen.getByLabelText('High protein filter'), 'valueChange', false);
     });
 
     await waitFor(() => {
@@ -235,7 +229,7 @@ describe('ExploreScreen', () => {
     });
     getMatchingMeals.mockReturnValue([createMeal(2, 'Grilled Salmon with Roasted Vegetables')]);
 
-    render(<ExploreScreen navigation={mockNavigation} />);
+    await render(<ExploreScreen navigation={mockNavigation} />);
 
     await waitFor(() => {
       expect(screen.getByLabelText('High protein filter')).toBeTruthy();
@@ -253,7 +247,7 @@ describe('ExploreScreen', () => {
     });
     getMatchingMeals.mockReturnValue([createMeal(2, 'Grilled Salmon with Roasted Vegetables')]);
 
-    render(<ExploreScreen navigation={mockNavigation} />);
+    await render(<ExploreScreen navigation={mockNavigation} />);
 
     await waitFor(() => {
       expect(screen.getByLabelText('High protein filter')).toBeTruthy();
@@ -299,20 +293,20 @@ describe('ExploreScreen', () => {
     });
     getMatchingMeals.mockReturnValue(meals);
 
-    render(<ExploreScreen navigation={mockNavigation} />);
+    await render(<ExploreScreen navigation={mockNavigation} />);
 
     await waitFor(() => {
       expect(screen.getByText('1 of 2')).toBeTruthy();
     });
 
     await act(async () => {
-      fireEvent.press(screen.getByLabelText('Show next meal idea'));
+      await fireEvent.press(screen.getByLabelText('Show next meal idea'));
       jest.runOnlyPendingTimers();
     });
     expect(screen.getByText('2 of 2')).toBeTruthy();
 
     await act(async () => {
-      focusCallback();
+      await focusCallback();
     });
 
     expect(screen.getByText('2 of 2')).toBeTruthy();
@@ -352,20 +346,20 @@ describe('ExploreScreen', () => {
       .mockReturnValueOnce('Showing all meals')
       .mockReturnValueOnce('Filtered by Low Carb');
 
-    render(<ExploreScreen navigation={mockNavigation} />);
+    await render(<ExploreScreen navigation={mockNavigation} />);
 
     await waitFor(() => {
       expect(screen.getByText('1 of 2')).toBeTruthy();
     });
 
     await act(async () => {
-      fireEvent.press(screen.getByLabelText('Show next meal idea'));
+      await fireEvent.press(screen.getByLabelText('Show next meal idea'));
       jest.runOnlyPendingTimers();
     });
     expect(screen.getByText('2 of 2')).toBeTruthy();
 
     await act(async () => {
-      focusCallback();
+      await focusCallback();
     });
 
     await waitFor(() => {
@@ -383,7 +377,7 @@ describe('ExploreScreen', () => {
       loadPreferences: jest.fn().mockReturnValue(deferred.promise),
     });
 
-    render(<ExploreScreen navigation={mockNavigation} />);
+    await render(<ExploreScreen navigation={mockNavigation} />);
 
     expect(screen.getByText('Loading meal ideas...')).toBeTruthy();
 
@@ -408,32 +402,32 @@ describe('ExploreScreen', () => {
     getMatchingMeals.mockReturnValue(meals);
     getPreferenceSummary.mockReturnValue('Showing all meals');
 
-    render(<ExploreScreen navigation={mockNavigation} />);
+    await render(<ExploreScreen navigation={mockNavigation} />);
 
     await waitFor(() => {
       expect(screen.getByText('1 of 2')).toBeTruthy();
     });
 
-    const previousButton = getPressableAncestor(screen.getByText('Previous'));
-    const nextButton = getPressableAncestor(screen.getByText('Next'));
+    const previousButton = screen.getByLabelText('Show previous meal idea');
+    const nextButton = screen.getByLabelText('Show next meal idea');
 
-    expect(previousButton.props.disabled).toBe(true);
-    expect(nextButton.props.disabled).toBe(false);
+    expect(isButtonDisabled(previousButton)).toBe(true);
+    expect(isButtonDisabled(nextButton)).toBe(false);
 
     await act(async () => {
-      fireEvent.press(previousButton);
+      await fireEvent.press(previousButton);
       jest.runOnlyPendingTimers();
     });
     expect(screen.getByText('1 of 2')).toBeTruthy();
 
     await act(async () => {
-      fireEvent.press(nextButton);
+      await fireEvent.press(nextButton);
       jest.runOnlyPendingTimers();
     });
 
     expect(screen.getByText('2 of 2')).toBeTruthy();
-    expect(getPressableAncestor(screen.getByText('Previous')).props.disabled).toBe(false);
-    expect(getPressableAncestor(screen.getByText('Next')).props.disabled).toBe(true);
+    expect(isButtonDisabled(screen.getByLabelText('Show previous meal idea'))).toBe(false);
+    expect(isButtonDisabled(screen.getByLabelText('Show next meal idea'))).toBe(true);
   });
 
   it('resets to the first card when shuffle mix is used from a later position', async () => {
@@ -449,26 +443,26 @@ describe('ExploreScreen', () => {
     getMatchingMeals.mockReturnValue(meals);
     getPreferenceSummary.mockReturnValue('Showing all meals');
 
-    render(<ExploreScreen navigation={mockNavigation} />);
+    await render(<ExploreScreen navigation={mockNavigation} />);
 
     await waitFor(() => {
       expect(screen.getByText('1 of 3')).toBeTruthy();
     });
 
     await act(async () => {
-      fireEvent.press(screen.getByLabelText('Show next meal idea'));
+      await fireEvent.press(screen.getByLabelText('Show next meal idea'));
       jest.runOnlyPendingTimers();
     });
 
     expect(screen.getByText('2 of 3')).toBeTruthy();
 
     await act(async () => {
-      fireEvent.press(screen.getByLabelText('Shuffle meal ideas'));
+      await fireEvent.press(screen.getByLabelText('Shuffle meal ideas'));
       jest.runOnlyPendingTimers();
     });
 
     expect(screen.getByText('1 of 3')).toBeTruthy();
-    expect(getPressableAncestor(screen.getByText('Previous')).props.disabled).toBe(true);
+    expect(isButtonDisabled(screen.getByLabelText('Show previous meal idea'))).toBe(true);
   });
 
   it('updates the active indicator when horizontal scrolling lands on a different card', async () => {
@@ -484,16 +478,16 @@ describe('ExploreScreen', () => {
     getMatchingMeals.mockReturnValue(meals);
     getPreferenceSummary.mockReturnValue('Showing all meals');
 
-    const view = render(<ExploreScreen navigation={mockNavigation} />);
+    await render(<ExploreScreen navigation={mockNavigation} />);
 
     await waitFor(() => {
       expect(screen.getByText('1 of 3')).toBeTruthy();
     });
 
-    const list = view.UNSAFE_getByType(FlatList);
+    const list = screen.getByTestId('explore-meal-list');
 
     await act(async () => {
-      fireEvent(list, 'momentumScrollEnd', {
+      await fireEvent(list, 'momentumScrollEnd', {
         nativeEvent: {
           contentOffset: {
             x: SNAP_INTERVAL * 2,
@@ -503,6 +497,6 @@ describe('ExploreScreen', () => {
     });
 
     expect(screen.getByText('3 of 3')).toBeTruthy();
-    expect(getPressableAncestor(screen.getByText('Next')).props.disabled).toBe(true);
+    expect(isButtonDisabled(screen.getByLabelText('Show next meal idea'))).toBe(true);
   });
 });

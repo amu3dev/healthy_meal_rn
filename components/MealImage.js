@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { Image as ExpoImage } from 'expo-image';
 import { COLORS } from '../lib/theme';
@@ -10,14 +10,16 @@ export default function MealImage({
   contentFit = 'cover',
   isDecorative = false,
 }) {
+  const [prevUri, setPrevUri] = useState(uri);
   const [isLoading, setIsLoading] = useState(Boolean(uri));
   const [hasError, setHasError] = useState(!uri);
   const fallbackLabel = useMemo(() => label || 'Meal photo', [label]);
 
-  useEffect(() => {
+  if (prevUri !== uri) {
+    setPrevUri(uri);
     setIsLoading(Boolean(uri));
     setHasError(!uri);
-  }, [uri]);
+  }
 
   if (hasError) {
     return (
@@ -63,7 +65,7 @@ export default function MealImage({
 
       {isLoading ? (
         <View style={styles.loadingOverlay}>
-          <ActivityIndicator size="small" color={COLORS.primary} />
+          <ActivityIndicator testID="meal-image-loading" size="small" color={COLORS.primary} />
         </View>
       ) : null}
     </View>

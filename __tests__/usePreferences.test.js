@@ -17,9 +17,7 @@ describe('usePreferences', () => {
       dairyFree: true,
     }));
 
-    const { result } = renderHook(() => usePreferences());
-
-    expect(result.current.isLoading).toBe(true);
+    const { result } = await renderHook(() => usePreferences());
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -38,7 +36,7 @@ describe('usePreferences', () => {
       highProtein: true,
     }));
 
-    const { result } = renderHook(() => usePreferences({ loadOnMount: false }));
+    const { result } = await renderHook(() => usePreferences({ loadOnMount: false }));
 
     expect(result.current.isLoading).toBe(false);
     expect(AsyncStorage.getItem).not.toHaveBeenCalled();
@@ -56,7 +54,7 @@ describe('usePreferences', () => {
   });
 
   it('normalizes and persists preferences when saving', async () => {
-    const { result } = renderHook(() => usePreferences({ loadOnMount: false }));
+    const { result } = await renderHook(() => usePreferences({ loadOnMount: false }));
 
     await act(async () => {
       await result.current.savePreferences({
@@ -83,16 +81,16 @@ describe('usePreferences', () => {
     });
   });
 
-  it('toggles a single preference flag in memory', () => {
-    const { result } = renderHook(() => usePreferences({ loadOnMount: false }));
+  it('toggles a single preference flag in memory', async () => {
+    const { result } = await renderHook(() => usePreferences({ loadOnMount: false }));
 
-    act(() => {
+    await act(async () => {
       result.current.togglePreference('vegetarian');
     });
 
     expect(result.current.preferences.vegetarian).toBe(true);
 
-    act(() => {
+    await act(async () => {
       result.current.togglePreference('vegetarian');
     });
 

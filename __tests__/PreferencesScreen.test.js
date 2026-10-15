@@ -16,7 +16,7 @@ describe('PreferencesScreen', () => {
     Alert.alert.mockRestore();
   });
 
-  it('shows a loading state while preferences hydrate', () => {
+  it('shows a loading state while preferences hydrate', async () => {
     usePreferences.mockReturnValue({
       preferences: {
         vegetarian: false,
@@ -31,7 +31,7 @@ describe('PreferencesScreen', () => {
       togglePreference: jest.fn(),
     });
 
-    render(<PreferencesScreen />);
+    await render(<PreferencesScreen />);
 
     expect(screen.getByText('Loading preferences...')).toBeTruthy();
     expect(screen.getByLabelText('Loading saved dietary preferences')).toBeTruthy();
@@ -54,7 +54,7 @@ describe('PreferencesScreen', () => {
       togglePreference: jest.fn(),
     });
 
-    render(<PreferencesScreen />);
+    await render(<PreferencesScreen />);
 
     expect(screen.getByText('Dietary filters')).toBeTruthy();
     expect(screen.getByText('Optional meal goals')).toBeTruthy();
@@ -63,7 +63,7 @@ describe('PreferencesScreen', () => {
     expect(screen.getByLabelText('Vegan preference')).toBeTruthy();
     expect(screen.getByLabelText('High Protein (20g+) preference')).toBeTruthy();
 
-    fireEvent.press(screen.getByLabelText('Save dietary preferences'));
+    await fireEvent.press(screen.getByLabelText('Save dietary preferences'));
 
     await waitFor(() => {
       expect(savePreferences).toHaveBeenCalled();

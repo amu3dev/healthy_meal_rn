@@ -219,6 +219,7 @@ export default function ExploreScreen({ navigation }) {
       {hasMeals ? (
         <>
           <FlatList
+            testID="explore-meal-list"
             ref={flatListRef}
             style={styles.list}
             horizontal

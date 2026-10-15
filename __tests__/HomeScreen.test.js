@@ -42,13 +42,13 @@ describe('HomeScreen', () => {
     getPreferenceSummary.mockReturnValue('Showing all meals');
   });
 
-  it('renders a loading state before the focus effect runs', () => {
+  it('renders a loading state before the focus effect runs', async () => {
     useFocusEffect.mockImplementation(() => {});
     usePreferences.mockReturnValue({
       loadPreferences: jest.fn(),
     });
 
-    render(<HomeScreen navigation={mockNavigation} />);
+    await render(<HomeScreen navigation={mockNavigation} />);
 
     expect(screen.getByText('Loading...')).toBeTruthy();
     expect(screen.getByLabelText("Loading today's healthy meal")).toBeTruthy();
@@ -68,7 +68,7 @@ describe('HomeScreen', () => {
       'No meals match these selections: Vegan, High Protein (20g+), Low Carb.'
     );
 
-    render(<HomeScreen navigation={mockNavigation} />);
+    await render(<HomeScreen navigation={mockNavigation} />);
 
     await waitFor(() => {
       expect(screen.getByText('No meal matches all selections')).toBeTruthy();
@@ -76,7 +76,7 @@ describe('HomeScreen', () => {
 
     expect(screen.getByText('No meals match these selections: Vegan, High Protein (20g+), Low Carb.')).toBeTruthy();
     expect(screen.getByText('Turn off one selected filter or goal, save your changes, and return here to try again. Nothing is changed automatically.')).toBeTruthy();
-    fireEvent.press(screen.getByLabelText('Review dietary preferences'));
+    await fireEvent.press(screen.getByLabelText('Review dietary preferences'));
     expect(mockNavigation.navigate).toHaveBeenCalledWith('Preferences');
   });
 
@@ -87,7 +87,7 @@ describe('HomeScreen', () => {
       loadPreferences: jest.fn().mockRejectedValue(new Error('storage unavailable')),
     });
 
-    render(<HomeScreen navigation={mockNavigation} />);
+    await render(<HomeScreen navigation={mockNavigation} />);
 
     await waitFor(() => {
       expect(screen.getByText("Unable to load today's meal")).toBeTruthy();
@@ -118,14 +118,14 @@ describe('HomeScreen', () => {
       image: 'https://example.com/quinoa.jpg',
     });
 
-    render(<HomeScreen navigation={mockNavigation} />);
+    await render(<HomeScreen navigation={mockNavigation} />);
 
     await waitFor(() => {
       expect(screen.getByText("Make today's pick fit you")).toBeTruthy();
     });
 
     expect(screen.getByText('Set dietary filters or optional meal goals to narrow your recommendation.')).toBeTruthy();
-    fireEvent.press(screen.getByLabelText('Set dietary preferences'));
+    await fireEvent.press(screen.getByLabelText('Set dietary preferences'));
     expect(mockNavigation.navigate).toHaveBeenCalledWith('Preferences');
   });
 
@@ -149,14 +149,14 @@ describe('HomeScreen', () => {
     });
     getDailyMeal.mockReturnValue(meal);
 
-    render(<HomeScreen navigation={mockNavigation} />);
+    await render(<HomeScreen navigation={mockNavigation} />);
 
     await waitFor(() => {
       expect(screen.getByText('Turkey Lettuce Wraps')).toBeTruthy();
     });
 
     expect(screen.getByLabelText('Open dietary preferences')).toBeTruthy();
-    fireEvent.press(screen.getByLabelText('Open recipe details for Turkey Lettuce Wraps'));
+    await fireEvent.press(screen.getByLabelText('Open recipe details for Turkey Lettuce Wraps'));
     expect(mockNavigation.navigate).toHaveBeenCalledWith('RecipeDetail', { mealId: 4 });
   });
 
@@ -180,13 +180,13 @@ describe('HomeScreen', () => {
     });
     getDailyMeal.mockReturnValue(meal);
 
-    render(<HomeScreen navigation={mockNavigation} />);
+    await render(<HomeScreen navigation={mockNavigation} />);
 
     await waitFor(() => {
       expect(screen.getByText('Want more ideas?')).toBeTruthy();
     });
 
-    fireEvent.press(screen.getByLabelText('Explore more meal ideas'));
+    await fireEvent.press(screen.getByLabelText('Explore more meal ideas'));
     expect(mockNavigation.navigate).toHaveBeenCalledWith('Explore');
   });
 
@@ -218,14 +218,14 @@ describe('HomeScreen', () => {
       image: 'https://example.com/turkey-wraps.jpg',
     });
 
-    render(<HomeScreen navigation={mockNavigation} />);
+    await render(<HomeScreen navigation={mockNavigation} />);
 
     await waitFor(() => {
       expect(screen.getByText('Turkey Lettuce Wraps')).toBeTruthy();
     });
 
     await act(async () => {
-      focusCallback();
+      await focusCallback();
     });
 
     // While the refocus load is still pending, the previous content stays visible.
@@ -246,13 +246,13 @@ describe('HomeScreen', () => {
     });
     getDailyMeal.mockReturnValue(null);
 
-    render(<HomeScreen navigation={mockNavigation} />);
+    await render(<HomeScreen navigation={mockNavigation} />);
 
     await waitFor(() => {
       expect(screen.getByLabelText('Open favorite meals')).toBeTruthy();
     });
 
-    fireEvent.press(screen.getByLabelText('Open favorite meals'));
+    await fireEvent.press(screen.getByLabelText('Open favorite meals'));
     expect(mockNavigation.navigate).toHaveBeenCalledWith('Favorites');
   });
 });

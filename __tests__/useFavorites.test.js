@@ -11,7 +11,7 @@ describe('useFavorites', () => {
   it('hydrates a meal favorite from deduplicated stored ids', async () => {
     AsyncStorage.getItem.mockResolvedValueOnce(JSON.stringify([2, 2, 'invalid', 7]));
 
-    const { result } = renderHook(() => useFavorites(2));
+    const { result } = await renderHook(() => useFavorites(2));
 
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
@@ -22,7 +22,7 @@ describe('useFavorites', () => {
   it('favorites and unfavorites a meal without duplicate ids', async () => {
     AsyncStorage.getItem.mockResolvedValue(JSON.stringify([2, 2]));
 
-    const { result } = renderHook(() => useFavorites(2));
+    const { result } = await renderHook(() => useFavorites(2));
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
     await act(async () => {
@@ -46,7 +46,7 @@ describe('useFavorites', () => {
 
   it('keeps the confirmed state when persistence fails', async () => {
     AsyncStorage.getItem.mockResolvedValueOnce(JSON.stringify([]));
-    const { result } = renderHook(() => useFavorites(2));
+    const { result } = await renderHook(() => useFavorites(2));
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
     AsyncStorage.setItem.mockRejectedValueOnce(new Error('storage unavailable'));

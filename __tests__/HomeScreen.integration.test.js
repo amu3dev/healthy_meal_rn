@@ -51,7 +51,7 @@ describe('HomeScreen integration', () => {
       JSON.stringify(savedPreferences)
     );
 
-    render(<HomeScreen navigation={mockNavigation} />);
+    await render(<HomeScreen navigation={mockNavigation} />);
 
     await waitFor(() => {
       expect(screen.getByText(expectedMeal.name)).toBeTruthy();
@@ -60,7 +60,7 @@ describe('HomeScreen integration', () => {
     expect(screen.getByText(expectedSummary)).toBeTruthy();
     expect(screen.getByLabelText(`Open recipe details for ${expectedMeal.name}`)).toBeTruthy();
 
-    fireEvent.press(screen.getByLabelText(`Open recipe details for ${expectedMeal.name}`));
+    await fireEvent.press(screen.getByLabelText(`Open recipe details for ${expectedMeal.name}`));
     expect(mockNavigation.navigate).toHaveBeenCalledWith('RecipeDetail', {
       mealId: expectedMeal.id,
     });

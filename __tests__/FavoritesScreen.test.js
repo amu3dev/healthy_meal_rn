@@ -28,7 +28,7 @@ describe('FavoritesScreen', () => {
   it('lists saved favorites newest first and opens recipe details', async () => {
     AsyncStorage.getItem.mockResolvedValue(JSON.stringify([1, 2]));
 
-    render(<FavoritesScreen navigation={mockNavigation} />);
+    await render(<FavoritesScreen navigation={mockNavigation} />);
 
     await waitFor(() => {
       expect(screen.getByText('Grilled Salmon with Roasted Vegetables')).toBeTruthy();
@@ -37,20 +37,20 @@ describe('FavoritesScreen', () => {
       .map((node) => node.props.children);
     expect(names).toEqual(['Grilled Salmon with Roasted Vegetables', 'Quinoa Buddha Bowl']);
 
-    fireEvent.press(screen.getByLabelText('Open recipe details for Quinoa Buddha Bowl'));
+    await fireEvent.press(screen.getByLabelText('Open recipe details for Quinoa Buddha Bowl'));
     expect(mockNavigation.navigate).toHaveBeenCalledWith('RecipeDetail', { mealId: 1 });
   });
 
   it('shows an empty state that points to Explore when nothing is saved', async () => {
     AsyncStorage.getItem.mockResolvedValue(null);
 
-    render(<FavoritesScreen navigation={mockNavigation} />);
+    await render(<FavoritesScreen navigation={mockNavigation} />);
 
     await waitFor(() => {
       expect(screen.getByText('No favorites yet')).toBeTruthy();
     });
 
-    fireEvent.press(screen.getByLabelText('Explore meals to favorite'));
+    await fireEvent.press(screen.getByLabelText('Explore meals to favorite'));
     expect(mockNavigation.navigate).toHaveBeenCalledWith('Explore');
   });
 
@@ -59,14 +59,14 @@ describe('FavoritesScreen', () => {
       .mockResolvedValueOnce(JSON.stringify([]))
       .mockResolvedValueOnce(JSON.stringify([4]));
 
-    render(<FavoritesScreen navigation={mockNavigation} />);
+    await render(<FavoritesScreen navigation={mockNavigation} />);
 
     await waitFor(() => {
       expect(screen.getByText('No favorites yet')).toBeTruthy();
     });
 
     await act(async () => {
-      focusCallback();
+      await focusCallback();
     });
 
     await waitFor(() => {
@@ -81,7 +81,7 @@ describe('FavoritesScreen', () => {
       .mockRejectedValueOnce(new Error('storage unavailable'))
       .mockResolvedValueOnce(JSON.stringify([2]));
 
-    render(<FavoritesScreen navigation={mockNavigation} />);
+    await render(<FavoritesScreen navigation={mockNavigation} />);
 
     await waitFor(() => {
       expect(screen.getByText('Unable to load favorites')).toBeTruthy();
@@ -89,7 +89,7 @@ describe('FavoritesScreen', () => {
     expect(consoleError).toHaveBeenCalledWith('Error loading favorite meals:', expect.any(Error));
 
     await act(async () => {
-      fireEvent.press(screen.getByLabelText('Retry loading favorite meals'));
+      await fireEvent.press(screen.getByLabelText('Retry loading favorite meals'));
     });
 
     await waitFor(() => {
