@@ -116,10 +116,14 @@ const styles = StyleSheet.create({
   },
   nutritionRow: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: SPACING.sm,
     justifyContent: 'space-around',
     marginTop: SPACING.lg,
   },
   nutritionItem: {
+    flexGrow: 1,
+    minWidth: '20%',
     alignItems: 'center',
   },
   nutritionValue: {

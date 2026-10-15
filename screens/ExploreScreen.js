@@ -1,13 +1,15 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import {
-  Dimensions,
   FlatList,
+  ScrollView,
   StyleSheet,
   Switch,
   Text,
   TouchableOpacity,
   View,
+  useWindowDimensions,
 } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import MealCard from '../components/MealCard';
 import {
@@ -24,10 +26,7 @@ import {
 import { COLORS, RADII, SHADOWS, SPACING } from '../lib/theme';
 import usePreferences from '../hooks/usePreferences';
 
-const SCREEN_WIDTH = Dimensions.get('window').width;
-const CARD_WIDTH = SCREEN_WIDTH - 56;
 const CARD_GAP = SPACING.lg;
-const SNAP_INTERVAL = CARD_WIDTH + CARD_GAP;
 
 function shuffleMeals(meals) {
   const nextMeals = [...meals];
@@ -43,7 +42,15 @@ function shuffleMeals(meals) {
 }
 
 export default function ExploreScreen({ navigation }) {
+  const { width, height, fontScale } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
+  // Leave a glimpse of the next meal, and avoid oversized cards on tablets.
+  const cardWidth = Math.min(width - insets.left - insets.right - 56, 420);
+  const snapInterval = cardWidth + CARD_GAP;
+  const imageHeight = Math.max(120, Math.min(180, cardWidth * 0.52, height * 0.23));
+  const stackedControls = fontScale > 1.3 || width - insets.left - insets.right < 340;
   const flatListRef = useRef(null);
+  const listWidthRef = useRef(null);
   const hasLoadedRef = useRef(false);
   const preferencesKeyRef = useRef('');
   const [meals, setMeals] = useState([]);
@@ -61,10 +68,10 @@ export default function ExploreScreen({ navigation }) {
   const scrollToIndex = useCallback((nextIndex) => {
     flatListRef.current?.scrollToOffset({
       animated: true,
-      offset: nextIndex * SNAP_INTERVAL,
+      offset: nextIndex * snapInterval,
     });
     setActiveIndex(nextIndex);
-  }, []);
+  }, [snapInterval]);
 
   const loadExploreMeals = useCallback(async () => {
     try {
@@ -160,9 +167,12 @@ export default function ExploreScreen({ navigation }) {
   }, [activeIndex, hasMeals, scrollToIndex]);
 
   const handleMomentumScrollEnd = useCallback((event) => {
-    const nextIndex = Math.round(event.nativeEvent.contentOffset.x / SNAP_INTERVAL);
+    const nextIndex = Math.max(0, Math.min(
+      meals.length - 1,
+      Math.round(event.nativeEvent.contentOffset.x / snapInterval)
+    ));
     setActiveIndex(nextIndex);
-  }, []);
+  }, [meals.length, snapInterval]);
 
   const indicatorText = useMemo(() => {
     if (!hasMeals) {
@@ -185,141 +195,164 @@ export default function ExploreScreen({ navigation }) {
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Explore More Meals</Text>
-        <Text style={styles.summaryText}>{statusMessage}</Text>
-        <View style={styles.filterRow}>
-          <Text style={styles.filterLabel}>{formatPreferenceLabel('highProtein')}</Text>
-          <Switch
-            value={savedHighProtein || highProteinOverride}
-            onValueChange={setHighProteinOverride}
-            disabled={savedHighProtein}
-            accessibilityRole="switch"
-            accessibilityState={{
-              checked: savedHighProtein || highProteinOverride,
-              disabled: savedHighProtein,
-            }}
-            accessibilityLabel="High protein filter"
-            accessibilityHint={
-              savedHighProtein
-                ? 'On because High Protein is saved in your preferences'
-                : `Shows meals with at least ${HIGH_PROTEIN_THRESHOLD}g of protein when enabled`
-            }
-          />
-        </View>
-        {savedHighProtein ? (
-          <Text style={styles.filterNote}>Saved in your preferences.</Text>
-        ) : null}
-        <Text style={styles.helperText}>
-          Swipe through the gallery or use the controls below to browse fresh ideas from your filtered meal pool.
-        </Text>
-      </View>
-
-      {hasMeals ? (
-        <>
-          <FlatList
-            testID="explore-meal-list"
-            ref={flatListRef}
-            style={styles.list}
-            horizontal
-            data={meals}
-            keyExtractor={(item) => String(item.id)}
-            showsHorizontalScrollIndicator={false}
-            decelerationRate="fast"
-            disableIntervalMomentum
-            snapToInterval={SNAP_INTERVAL}
-            snapToAlignment="start"
-            contentContainerStyle={styles.listContent}
-            ItemSeparatorComponent={() => <View style={styles.cardGap} />}
-            onMomentumScrollEnd={handleMomentumScrollEnd}
-            renderItem={({ item }) => (
-              <MealCard
-                meal={item}
-                cardStyle={styles.card}
-                imageStyle={styles.mealImage}
-                contentStyle={styles.cardContent}
-                metaStyle={styles.metaText}
-                nutritionRowStyle={styles.nutritionRow}
-                metaPlacement="beforeNutrition"
-                onPress={() => navigation.navigate('RecipeDetail', { mealId: item.id })}
-                accessibilityLabel={`Open recipe details for ${item.name}`}
-              />
-            )}
-          />
-
-          <View style={styles.controlsSection}>
-            <Text style={styles.indicatorText}>{indicatorText}</Text>
-
-            <View style={styles.controlsRow}>
-              <TouchableOpacity
-                style={[styles.controlButton, activeIndex === 0 && styles.controlButtonDisabled]}
-                onPress={handlePrevious}
-                disabled={activeIndex === 0}
-                accessibilityRole="button"
-                accessibilityLabel="Show previous meal idea"
-              >
-                <Text style={styles.controlButtonText}>Previous</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={styles.controlButtonPrimary}
-                onPress={handleShuffleMix}
-                accessibilityRole="button"
-                accessibilityLabel="Shuffle meal ideas"
-              >
-                <Text style={styles.controlButtonPrimaryText}>Shuffle Mix</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={[
-                  styles.controlButton,
-                  activeIndex >= meals.length - 1 && styles.controlButtonDisabled,
-                ]}
-                onPress={handleNext}
-                disabled={activeIndex >= meals.length - 1}
-                accessibilityRole="button"
-                accessibilityLabel="Show next meal idea"
-              >
-                <Text style={styles.controlButtonText}>Next</Text>
-              </TouchableOpacity>
-            </View>
+    <SafeAreaView style={styles.container} edges={['left', 'right', 'bottom']}>
+      <ScrollView
+        testID="explore-page"
+        style={styles.page}
+        contentContainerStyle={styles.pageContent}
+      >
+        <View style={styles.header}>
+          <Text style={styles.title}>Explore More Meals</Text>
+          <Text style={styles.summaryText}>{statusMessage}</Text>
+          <View style={styles.filterRow}>
+            <Text style={styles.filterLabel}>{formatPreferenceLabel('highProtein')}</Text>
+            <Switch
+              value={savedHighProtein || highProteinOverride}
+              onValueChange={setHighProteinOverride}
+              disabled={savedHighProtein}
+              accessibilityRole="switch"
+              accessibilityState={{
+                checked: savedHighProtein || highProteinOverride,
+                disabled: savedHighProtein,
+              }}
+              accessibilityLabel="High protein filter"
+              accessibilityHint={
+                savedHighProtein
+                  ? 'On because High Protein is saved in your preferences'
+                  : `Shows meals with at least ${HIGH_PROTEIN_THRESHOLD}g of protein when enabled`
+              }
+            />
           </View>
-        </>
-      ) : loadError ? (
-        <View style={styles.emptyCard}>
-          <Text style={styles.emptyTitle}>Unable to load meal ideas</Text>
-          <Text style={styles.emptyText}>
-            We could not load your saved preferences. Try again without changing them.
+          {savedHighProtein ? (
+            <Text style={styles.filterNote}>Saved in your preferences.</Text>
+          ) : null}
+          <Text style={styles.helperText}>
+            Swipe to browse. Tap to open a recipe.
           </Text>
-          <TouchableOpacity
-            style={styles.primaryButton}
-            onPress={handleRetry}
-            accessibilityRole="button"
-            accessibilityLabel="Retry loading meal ideas"
-          >
-            <Text style={styles.primaryButtonText}>Try Again</Text>
-          </TouchableOpacity>
         </View>
-      ) : (
-        <View style={styles.emptyCard}>
-          <Text style={styles.emptyTitle}>No meal ideas match these filters</Text>
-          <Text style={styles.emptyText}>
-            {highProteinOverride && !savedHighProtein
-              ? 'Turn off High Protein above, or revise a saved preference, then try again. Nothing is changed automatically.'
-              : 'Revise one saved preference, save your changes, and try again. Nothing is changed automatically.'}
-          </Text>
-          <TouchableOpacity
-            style={styles.primaryButton}
-            onPress={() => navigation.navigate('Preferences')}
-            accessibilityRole="button"
-            accessibilityLabel="Adjust dietary preferences"
-          >
-            <Text style={styles.primaryButtonText}>Adjust Preferences</Text>
-          </TouchableOpacity>
-        </View>
-      )}
-    </View>
+
+        {hasMeals ? (
+          <>
+            <FlatList
+              testID="explore-meal-list"
+              ref={flatListRef}
+              style={styles.list}
+              horizontal
+              data={meals}
+              keyExtractor={(item) => String(item.id)}
+              showsHorizontalScrollIndicator={false}
+              decelerationRate="fast"
+              disableIntervalMomentum
+              snapToInterval={snapInterval}
+              snapToAlignment="start"
+              onLayout={({ nativeEvent: { layout } }) => {
+                // A taller meal can change the list height while swiping. Only
+                // realign for width changes, so a swipe is never pulled back.
+                if (listWidthRef.current !== layout.width) {
+                  listWidthRef.current = layout.width;
+                  flatListRef.current?.scrollToOffset({
+                    animated: false,
+                    offset: activeIndex * snapInterval,
+                  });
+                }
+              }}
+              contentContainerStyle={styles.listContent}
+              ItemSeparatorComponent={() => <View style={styles.cardGap} />}
+              onMomentumScrollEnd={handleMomentumScrollEnd}
+              renderItem={({ item }) => (
+                <MealCard
+                  meal={item}
+                  cardStyle={[styles.card, { width: cardWidth }]}
+                  imageStyle={{ height: imageHeight }}
+                  contentStyle={styles.cardContent}
+                  titleStyle={styles.mealTitle}
+                  metaStyle={styles.metaText}
+                  nutritionRowStyle={styles.nutritionRow}
+                  metaPlacement="beforeNutrition"
+                  onPress={() => navigation.navigate('RecipeDetail', { mealId: item.id })}
+                  accessibilityLabel={`Open recipe details for ${item.name}`}
+                />
+              )}
+            />
+
+            <View style={styles.controlsSection}>
+              <Text style={styles.indicatorText}>{indicatorText}</Text>
+
+              <View style={[styles.controlsRow, stackedControls && styles.controlsColumn]}>
+                <TouchableOpacity
+                  style={[
+                    styles.controlButton,
+                    stackedControls && styles.stackedControlButton,
+                    activeIndex === 0 && styles.controlButtonDisabled,
+                  ]}
+                  onPress={handlePrevious}
+                  disabled={activeIndex === 0}
+                  accessibilityRole="button"
+                  accessibilityLabel="Show previous meal idea"
+                >
+                  <Text style={styles.controlButtonText}>Previous</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={[styles.controlButtonPrimary, stackedControls && styles.stackedControlButton]}
+                  onPress={handleShuffleMix}
+                  accessibilityRole="button"
+                  accessibilityLabel="Shuffle meal ideas"
+                >
+                  <Text style={styles.controlButtonPrimaryText}>Shuffle Mix</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={[
+                    styles.controlButton,
+                    stackedControls && styles.stackedControlButton,
+                    activeIndex >= meals.length - 1 && styles.controlButtonDisabled,
+                  ]}
+                  onPress={handleNext}
+                  disabled={activeIndex >= meals.length - 1}
+                  accessibilityRole="button"
+                  accessibilityLabel="Show next meal idea"
+                >
+                  <Text style={styles.controlButtonText}>Next</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </>
+        ) : loadError ? (
+          <View style={styles.emptyCard}>
+            <Text style={styles.emptyTitle}>Unable to load meal ideas</Text>
+            <Text style={styles.emptyText}>
+              We could not load your saved preferences. Try again without changing them.
+            </Text>
+            <TouchableOpacity
+              style={styles.primaryButton}
+              onPress={handleRetry}
+              accessibilityRole="button"
+              accessibilityLabel="Retry loading meal ideas"
+            >
+              <Text style={styles.primaryButtonText}>Try Again</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <View style={styles.emptyCard}>
+            <Text style={styles.emptyTitle}>No meal ideas match these filters</Text>
+            <Text style={styles.emptyText}>
+              {highProteinOverride && !savedHighProtein
+                ? 'Turn off High Protein above, or revise a saved preference, then try again. Nothing is changed automatically.'
+                : 'Revise one saved preference, save your changes, and try again. Nothing is changed automatically.'}
+            </Text>
+            <TouchableOpacity
+              style={styles.primaryButton}
+              onPress={() => navigation.navigate('Preferences')}
+              accessibilityRole="button"
+              accessibilityLabel="Adjust dietary preferences"
+            >
+              <Text style={styles.primaryButtonText}>Adjust Preferences</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
@@ -327,6 +360,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.background,
+  },
+  page: {
+    flex: 1,
+  },
+  pageContent: {
+    paddingBottom: SPACING.lg,
   },
   loadingContainer: {
     flex: 1,
@@ -339,7 +378,7 @@ const styles = StyleSheet.create({
     paddingTop: SPACING.lg,
   },
   title: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: 'bold',
     color: COLORS.textPrimary,
   },
@@ -361,6 +400,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   filterLabel: {
+    flex: 1,
+    marginRight: SPACING.sm,
     fontSize: 15,
     fontWeight: '600',
     color: COLORS.textPrimary,
@@ -379,16 +420,16 @@ const styles = StyleSheet.create({
   },
   list: {
     flexGrow: 0,
+    flexShrink: 0,
   },
   cardGap: {
     width: CARD_GAP,
   },
   card: {
-    width: CARD_WIDTH,
     alignSelf: 'flex-start',
   },
-  mealImage: {
-    height: 220,
+  mealTitle: {
+    fontSize: 22,
   },
   cardContent: {
     padding: SPACING.lg,
@@ -397,11 +438,12 @@ const styles = StyleSheet.create({
     marginTop: SPACING.sm,
   },
   nutritionRow: {
-    marginTop: SPACING.lg,
+    marginTop: SPACING.md,
   },
   controlsSection: {
     paddingHorizontal: SPACING.lg,
-    paddingVertical: SPACING.xl,
+    paddingTop: SPACING.md,
+    paddingBottom: SPACING.xs,
   },
   indicatorText: {
     textAlign: 'center',
@@ -414,12 +456,21 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     gap: SPACING.sm,
   },
+  controlsColumn: {
+    flexDirection: 'column',
+  },
+  stackedControlButton: {
+    flex: 0,
+  },
   controlButton: {
     flex: 1,
     backgroundColor: COLORS.surface,
     borderRadius: RADII.md,
     paddingVertical: 12,
+    paddingHorizontal: SPACING.xs,
+    minHeight: 48,
     alignItems: 'center',
+    justifyContent: 'center',
     ...SHADOWS.soft,
   },
   controlButtonPrimary: {
@@ -427,17 +478,22 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primary,
     borderRadius: RADII.md,
     paddingVertical: 12,
+    paddingHorizontal: SPACING.xs,
+    minHeight: 48,
     alignItems: 'center',
+    justifyContent: 'center',
     ...SHADOWS.soft,
   },
   controlButtonDisabled: {
     opacity: 0.45,
   },
   controlButtonText: {
+    textAlign: 'center',
     color: COLORS.textPrimary,
     fontWeight: '600',
   },
   controlButtonPrimaryText: {
+    textAlign: 'center',
     color: COLORS.primaryContrast,
     fontWeight: '700',
   },

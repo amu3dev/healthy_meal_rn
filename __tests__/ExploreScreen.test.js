@@ -1,6 +1,7 @@
 import React from 'react';
-import { Dimensions } from 'react-native';
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react-native';
+import { Dimensions, FlatList } from 'react-native';
+import { act, fireEvent, render as renderScreen, screen, waitFor } from '@testing-library/react-native';
+import { SafeAreaInsetsContext } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import ExploreScreen from '../screens/ExploreScreen';
 import usePreferences from '../hooks/usePreferences';
@@ -11,7 +12,13 @@ import {
   HIGH_PROTEIN_THRESHOLD,
 } from '../lib/mealUtils';
 import { DEFAULT_PREFERENCES } from '../lib/preferences';
-import { SPACING } from '../lib/theme';
+function render(ui) {
+  return renderScreen(
+    <SafeAreaInsetsContext.Provider value={{ top: 24, right: 0, bottom: 24, left: 0 }}>
+      {ui}
+    </SafeAreaInsetsContext.Provider>
+  );
+}
 
 jest.mock('@react-navigation/native', () => ({
   useFocusEffect: jest.fn(),
@@ -31,7 +38,7 @@ const mockNavigation = {
 };
 
 let focusCallback;
-const SNAP_INTERVAL = (Dimensions.get('window').width - 56) + SPACING.lg;
+const initialWindow = Dimensions.get('window');
 
 function createMeal(id, name, overrides = {}) {
   return {
@@ -89,8 +96,10 @@ describe('ExploreScreen', () => {
 
   afterEach(async () => {
     await act(async () => {
+      Dimensions.set({ window: initialWindow });
       jest.runOnlyPendingTimers();
     });
+    jest.restoreAllMocks();
     jest.useRealTimers();
   });
 
@@ -490,7 +499,7 @@ describe('ExploreScreen', () => {
       await fireEvent(list, 'momentumScrollEnd', {
         nativeEvent: {
           contentOffset: {
-            x: SNAP_INTERVAL * 2,
+            x: list.props.snapToInterval * 2,
           },
         },
       });
@@ -498,5 +507,70 @@ describe('ExploreScreen', () => {
 
     expect(screen.getByText('3 of 3')).toBeTruthy();
     expect(isButtonDisabled(screen.getByLabelText('Show next meal idea'))).toBe(true);
+  });
+
+  it('keeps the gallery position and uses the new card spacing after a window resize', async () => {
+    usePreferences.mockReturnValue({ loadPreferences: jest.fn().mockResolvedValue({}) });
+    getMatchingMeals.mockReturnValue([
+      createMeal(1, 'First meal'),
+      createMeal(2, 'Second meal'),
+      createMeal(3, 'Third meal'),
+    ]);
+    await act(async () => {
+      Dimensions.set({ window: { width: 360, height: 800, scale: 3, fontScale: 1 } });
+    });
+    await render(<ExploreScreen navigation={mockNavigation} />);
+    await waitFor(() => expect(screen.getByText('1 of 3')).toBeTruthy());
+
+    const scrollToOffset = jest.spyOn(FlatList.prototype, 'scrollToOffset').mockImplementation(() => {});
+    await fireEvent(screen.getByTestId('explore-meal-list'), 'layout', {
+      nativeEvent: { layout: { width: 360, height: 500 } },
+    });
+    const phoneInterval = screen.getByTestId('explore-meal-list').props.snapToInterval;
+    await fireEvent.press(screen.getByLabelText('Show next meal idea'));
+    expect(screen.getByText('2 of 3')).toBeTruthy();
+    scrollToOffset.mockClear();
+
+    // Different meal heights must not interrupt a horizontal swipe.
+    await fireEvent(screen.getByTestId('explore-meal-list'), 'layout', {
+      nativeEvent: { layout: { width: 360, height: 600 } },
+    });
+    expect(scrollToOffset).not.toHaveBeenCalled();
+
+    await act(async () => {
+      Dimensions.set({ window: { width: 800, height: 1000, scale: 2, fontScale: 1 } });
+    });
+    const list = screen.getByTestId('explore-meal-list');
+    expect(list.props.snapToInterval).toBeGreaterThan(phoneInterval);
+    expect(list.props.snapToInterval).toBeLessThan(800 / 2 + 56);
+    expect(screen.getByText('2 of 3')).toBeTruthy();
+    expect(getMatchingMeals).toHaveBeenCalledTimes(1);
+    await fireEvent(list, 'layout', {
+      nativeEvent: { layout: { width: 800, height: 600 } },
+    });
+    expect(scrollToOffset).toHaveBeenCalledWith({ animated: false, offset: list.props.snapToInterval });
+
+    await fireEvent(list, 'momentumScrollEnd', {
+      nativeEvent: { contentOffset: { x: list.props.snapToInterval * 2 } },
+    });
+    expect(screen.getByText('3 of 3')).toBeTruthy();
+    expect(screen.getByLabelText('Show next meal idea')).toBeDisabled();
+  });
+
+  it('keeps the meal indicator within the gallery boundaries when scrolling overshoots', async () => {
+    usePreferences.mockReturnValue({ loadPreferences: jest.fn().mockResolvedValue({}) });
+    getMatchingMeals.mockReturnValue([createMeal(1, 'First meal'), createMeal(2, 'Second meal')]);
+    await render(<ExploreScreen navigation={mockNavigation} />);
+    await waitFor(() => expect(screen.getByText('1 of 2')).toBeTruthy());
+    const list = screen.getByTestId('explore-meal-list');
+
+    await fireEvent(list, 'momentumScrollEnd', {
+      nativeEvent: { contentOffset: { x: -list.props.snapToInterval } },
+    });
+    expect(screen.getByText('1 of 2')).toBeTruthy();
+    await fireEvent(list, 'momentumScrollEnd', {
+      nativeEvent: { contentOffset: { x: list.props.snapToInterval * 3 } },
+    });
+    expect(screen.getByText('2 of 2')).toBeTruthy();
   });
 });
